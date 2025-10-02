@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     private float verticalVelocity;
     private Vector3 initialPosition;
     private Vector3 forwardVelocity;
+    private Vector3 horizontalVelocity;
     private Vector3 verticalVelocityVector;
     private Vector3 targetPosition;
     private bool isChangingLane = false;
@@ -59,19 +60,23 @@ public class PlayerController : MonoBehaviour
     {
         if (characterController == null || mainCamera == null) return;
 
-        // --- CALCULA AS DIREÇÕES RELATIVAS À CÂMERA ---
-        Vector3 cameraForward = mainCamera.transform.forward;
-        Vector3 cameraRight = mainCamera.transform.right;
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward.x = 0;
-        cameraRight.x = 0;
-        cameraForward.Normalize();
-        cameraRight.Normalize();
+        Vector3 cameraForward = GetCameraForwardDirection();
 
         // --- MOVIMENTO PARA FRENTE ---
         forwardVelocity = cameraForward * speed;
 
+        UpdateLanePosition();
+        UpdateGravityAndJump();
+
+        verticalVelocityVector = Vector3.up * verticalVelocity;
+
+        // --- COMBINA TODOS OS MOVIMENTOS EM UMA ÚNICA CHAMADA ---
+        targetPosition = forwardVelocity + horizontalVelocity + verticalVelocityVector;
+        characterController.Move(targetPosition * Time.deltaTime);
+    }
+
+    private void UpdateGravityAndJump()
+    {
         // --- GRAVIDADE E PULO ---
         if (characterController.isGrounded)
         {
@@ -81,18 +86,48 @@ public class PlayerController : MonoBehaviour
         {
             verticalVelocity -= gravity * Time.deltaTime;
         }
-        
-        verticalVelocityVector = Vector3.up * verticalVelocity;
+    }
 
-        targetPosition = forwardVelocity + verticalVelocityVector;
-
-        characterController.Move(targetPosition * Time.deltaTime);
-
-        // Sempre chama MoveLane para continuar o movimento
+    private void UpdateLanePosition()
+    {
+        // --- MOVIMENTO HORIZONTAL (MUDANÇA DE FAIXA) ---
         if (isChangingLane)
         {
-            MoveLane();
+            Vector3 targetLanePosition = initialPosition;
+            targetLanePosition.x += currentLane * laneWidth;
+
+            float currentX = playerTransform.position.x;
+            float targetX = targetLanePosition.x;
+
+            // Calcula a velocidade horizontal necessária para chegar à faixa alvo
+            float horizontalSpeed = (targetX - currentX) * laneChangeSpeed;
+            horizontalVelocity = Vector3.right * horizontalSpeed;
+
+            // Para o movimento quando chegar próximo da posição target
+            if (Mathf.Abs(currentX - targetX) < 0.1f)
+            {
+                horizontalVelocity = Vector3.zero;
+                isChangingLane = false;
+            }
         }
+        else
+        {
+            horizontalVelocity = Vector3.zero;
+        }
+    }
+
+    private Vector3 GetCameraForwardDirection()
+    {
+        // --- CALCULA AS DIREÇÕES RELATIVAS À CÂMERA ---
+        Vector3 cameraForward = mainCamera.transform.forward;
+        Vector3 cameraRight = mainCamera.transform.right;
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        cameraForward.x = 0;
+        cameraRight.x = 0;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+        return cameraForward;
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -135,27 +170,6 @@ public class PlayerController : MonoBehaviour
     private void Slider()
     {
         if (animator != null) animator.SetTrigger("Slider");
-    }
-
-    private void MoveLane()
-    {
-        Vector3 targetLanePosition = initialPosition;
-        targetLanePosition.x += currentLane * laneWidth;
-        
-        Vector3 currentPos = playerTransform.position;
-        
-        // Usa Lerp para movimento mais suave
-        float smoothTime = laneChangeSpeed * Time.deltaTime;
-        currentPos.x = Mathf.Lerp(currentPos.x, targetLanePosition.x, smoothTime);
-        
-        playerTransform.position = new Vector3(currentPos.x, playerTransform.position.y, playerTransform.position.z);
-        
-        // Para o movimento quando chegar próximo da posição target (threshold maior para suavidade)
-        if (Mathf.Abs(currentPos.x - targetLanePosition.x) < 0.1f)
-        {
-            playerTransform.position = new Vector3(targetLanePosition.x, playerTransform.position.y, playerTransform.position.z);
-            isChangingLane = false;
-        }
     }
 
     public void DisableInput() {
