@@ -14,7 +14,6 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
     private Animator animator;
     [SerializeField] private float speed = 5f, rotationSpeed = 5f;
-    [SerializeField] private GameObject joystick;
     private Vector2 moveInput;
     private Camera mainCamera;
 
@@ -29,7 +28,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        HandleMovement();
+        //HandleMovement();
     }
     private void HandleMovement()
     {
@@ -97,19 +96,17 @@ public class PlayerController : MonoBehaviour
 
     public void DisableInput()
     {
-        if (playerInput != null && joystick != null)
+        if (playerInput != null)
         {
             playerInput.DeactivateInput();
-            joystick.SetActive(false);
         }
     }
 
     public void EnableInput()
     {
-        if (playerInput != null && joystick != null)
+        if (playerInput != null)
         {
             playerInput.ActivateInput();
-            joystick.SetActive(true);
         }
     }
     
