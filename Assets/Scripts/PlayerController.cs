@@ -6,23 +6,25 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 
 [RequireComponent(typeof(Animator))]
-
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 
 {
     private CharacterController characterController;
     private PlayerInput playerInput;
     private Animator animator;
-    [SerializeField] private float speed = 5f, rotationSpeed = 5f;
+    private Transform playerTransform;
+    [SerializeField] private float speed = 5f, jumpForce = 5f;
 
-    void Awake()
+    void Awake()
     {
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
+        playerTransform = transform;
     }
-    
-    // Update is called once per frame
+
+    // Update is called once per frame
     void Update()
     {
         HandleMovement();
@@ -46,20 +48,52 @@ public class PlayerController : MonoBehaviour
             velocity.y = -2f; // Força para manter no chão
         }
 
+        MoveFoward(velocity);
+
+    }
+
+    private void MoveFoward(Vector3 velocity)
+    {
         // Aplica o movimento de corrida 
         Vector3 finalMovement = (Vector3.right * speed + velocity) * Time.deltaTime;
         characterController.Move(finalMovement);
-
-        
     }
 
-    public void SetSittingAnimation(bool isSitting)
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Debug.Log("Jump action triggered");
+            Jump();
+        }
+    }
+
+    public void OnSlide(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Debug.Log("Slide action triggered");
+            Slider();
+        }
+    }
+
+    private void Jump()
+    {
+        characterController.Move(jumpForce * Time.deltaTime * Vector3.up);
+        if (animator != null)
+        {
+            animator.SetTrigger("Jump");
+        }
+    }
+
+    private void Slider()
     {
         if (animator != null)
         {
-            animator.SetBool("Sitting", isSitting);
+            animator.SetTrigger("Slider");
         }
     }
+
 
     public void DisableInput()
     {
@@ -76,12 +110,14 @@ public class PlayerController : MonoBehaviour
             playerInput.ActivateInput();
         }
     }
-    
+
     public void DisableInputTemporarily(float duration)
     {
         DisableInput();
         Invoke(nameof(EnableInput), duration);
     }
+    
+
 
    
 }
