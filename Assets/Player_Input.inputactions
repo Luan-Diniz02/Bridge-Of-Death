@@ -6,68 +6,90 @@
             "id": "df70fa95-8a34-4494-b137-73ab6b9c7d37",
             "actions": [
                 {
-                    "name": "Jump",
-                    "type": "Button",
-                    "id": "45df5493-2ed0-4ec3-96f8-5ca855e75416",
-                    "expectedControlType": "Button",
+                    "name": "MoveHorizontal",
+                    "type": "Value",
+                    "id": "6d1aadde-d7a4-47f6-98dc-29902798c65f",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
-                    "name": "Slider",
-                    "type": "Button",
-                    "id": "23635061-7cf5-45c0-9ccc-01a246e23745",
-                    "expectedControlType": "Button",
+                    "name": "MoveVertical",
+                    "type": "Value",
+                    "id": "bd807b5f-c476-4d2f-b4f7-0766fd507047",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
                 {
-                    "name": "",
-                    "id": "84bb8acd-b47f-4d27-8cc1-2ffb5eeea337",
+                    "name": "2D Vector",
+                    "id": "33fd9503-b991-4072-95fc-16e459e06f58",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveHorizontal",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "left",
+                    "id": "4ffd5a1a-31ee-4106-b80b-46a394861219",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveHorizontal",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "ad032e83-7a39-43a2-bc05-3d4a2398826f",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveHorizontal",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "2D Vector",
+                    "id": "035f72df-5d6e-4237-8304-a5ad30ecedb0",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveVertical",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "f78eb563-d130-4f75-b0f4-6a60e3c75575",
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump",
+                    "action": "MoveVertical",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
-                    "name": "",
-                    "id": "9abe8721-e814-42cb-a2b6-d88ffa954638",
-                    "path": "<Keyboard>/upArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Jump",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "bb081444-0d99-4d05-852f-04829e7a5fa3",
+                    "name": "down",
+                    "id": "2b932124-3ab0-4070-9d7a-8a8704a84cda",
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Slider",
+                    "action": "MoveVertical",
                     "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "e950697b-eccf-4222-b644-70126cc013d0",
-                    "path": "<Keyboard>/downArrow",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Slider",
-                    "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 }
             ]
         }

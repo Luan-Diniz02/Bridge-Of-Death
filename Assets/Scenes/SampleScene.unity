@@ -140,6 +140,11 @@ PrefabInstance:
       propertyPath: speed
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 2810628924596815443, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
+      propertyPath: laneWidth
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.size
@@ -148,22 +153,32 @@ PrefabInstance:
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[0].m_ActionId
-      value: 45df5493-2ed0-4ec3-96f8-5ca855e75416
+      value: 6d1aadde-d7a4-47f6-98dc-29902798c65f
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_ActionId
-      value: 23635061-7cf5-45c0-9ccc-01a246e23745
+      value: bd807b5f-c476-4d2f-b4f7-0766fd507047
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_ActionId
+      value: 6d1aadde-d7a4-47f6-98dc-29902798c65f
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[0].m_ActionName
-      value: Player/Jump[/Keyboard/space]
+      value: Player/MoveSideways[/Keyboard/a,/Keyboard/d]
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_ActionName
-      value: Player/Slider[/Keyboard/s,/Keyboard/downArrow]
+      value: Player/MoveVertical[/Keyboard/w,/Keyboard/s]
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_ActionName
+      value: Player/MoveSideways[/Keyboard/a,/Keyboard/d]
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
@@ -173,6 +188,11 @@ PrefabInstance:
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
@@ -187,12 +207,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
       propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1284915892}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1284915892}
+    - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1284915892}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
@@ -207,13 +237,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
       propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnJump
+      value: OnMoveHorizontal
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnSlide
+      value: OnMoveVertical
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnMoveSideways
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
@@ -227,12 +267,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: PlayerController, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
       propertyPath: m_ActionEvents.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
+      propertyPath: m_ActionEvents.Array.data[2].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 6135906168460874038, guid: 13db973f16e9c6e46b2704a74b321135,
