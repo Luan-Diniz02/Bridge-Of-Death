@@ -6,11 +6,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
-    // MODIFICAÇÃO: Agora a movimentação é relativa à câmera principal
-    // - O movimento para frente segue a direção da câmera
-    // - O movimento lateral (faixas) é calculado baseado na orientação da câmera
-    // - Fallback para movimento original caso a câmera não seja encontrada
-    // --- COMPONENTES E VARIÁVEIS PRINCIPAIS ---
+    // --- COMPONENTES E REFERÊNCIAS ---
     private CharacterController characterController;
     private PlayerInput playerInput;
     private Animator animator;
@@ -19,55 +15,52 @@ public class PlayerController : MonoBehaviour
 
     [Header("Configurações de Movimento")]
     [SerializeField] private float speed = 5f;
-    [SerializeField] private float jumpForce = 8f; // Ajuste este valor para a altura do pulo
-    [SerializeField] private float gravity = 18f; // Um valor um pouco maior que 9.81 para um pulo mais "arcade"
+    [SerializeField] private float jumpForce = 8f;
+    [SerializeField] private float gravity = 18f;
 
-    // --- LÓGICA DE MOVIMENTO LATERAL (FAIXAS) ---
     [Header("Configurações de Faixa (Lane)")]
-    [SerializeField] private float laneWidth = 3f; // Distância entre o centro e uma faixa lateral
-    [SerializeField] private float laneChangeSpeed = 15f; // Velocidade da transição entre as faixas
+    [SerializeField] private float laneWidth = 3f; // Distância entre as faixas
+    [SerializeField] private float laneChangeSpeed = 10f; // Velocidade com que o personagem corrige a rota para a faixa
 
-    // Variáveis internas para controlar o estado do jogador
+    // --- ESTADO INTERNO DO JOGADOR ---
     private int currentLane = 0; // -1: Esquerda, 0: Centro, 1: Direita
-    private float verticalVelocity; // Guarda a velocidade vertical para pulo e gravidade
-    private Vector3 targetPosition; // Posição alvo para o movimento lateral suave
-    private Vector3 centerLanePosition; // Posição de referência para a faixa central
-    private bool isTransitioningLanes = false; // Controla se está em transição entre faixas
+    private float verticalVelocity;
+    
+    // Ponto de referência que se move sempre para frente, representando o centro do caminho
+    private Vector3 centerPathPoint;
 
     void Awake()
     {
-        // Pega as referências dos componentes no início do jogo
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
         playerTransform = transform;
         mainCamera = Camera.main;
-        
-        // Se Camera.main não funcionar, tenta encontrar a primeira câmera ativa na cena
+    }
+
+    void Start()
+    {
+        // Garante que a câmera seja encontrada mesmo que a tag não esteja definida no Awake
         if (mainCamera == null)
         {
             mainCamera = FindObjectOfType<Camera>();
         }
 
-        // Força o personagem a começar na faixa central (currentLane = 0)
-        currentLane = 0;
-        
-        // Inicializa a posição alvo e central com a posição inicial do personagem
-        targetPosition = playerTransform.position;
-        centerLanePosition = playerTransform.position;
-        isTransitioningLanes = false;
-    }
+        // Inicializa o ponto de referência do caminho na posição inicial do personagem
+        centerPathPoint = playerTransform.position;
 
-    void Start()
-    {
-        // Dupla verificação para garantir que a câmera foi encontrada
-        if (mainCamera == null)
+        // Opcional: Detecta a faixa inicial com base na posição no editor
+        // Isso evita o "salto" inicial se o personagem não começar no centro.
+        if (laneWidth > 0 && mainCamera != null)
         {
-            mainCamera = Camera.main;
-            if (mainCamera == null)
-            {
-                mainCamera = FindObjectOfType<Camera>();
-            }
+            Vector3 relativePos = playerTransform.position - centerPathPoint;
+            Vector3 cameraRight = mainCamera.transform.right;
+            cameraRight.y = 0;
+            cameraRight.Normalize();
+            
+            // Calcula o quanto o personagem está para o lado do ponto central
+            float sideOffset = Vector3.Dot(relativePos, cameraRight);
+            currentLane = Mathf.RoundToInt(sideOffset / laneWidth);
         }
     }
 
@@ -78,193 +71,108 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        if (characterController == null) return;
+        if (characterController == null || mainCamera == null) return;
 
-        // --- MOVIMENTO PARA FRENTE (Relativo à câmera) ---
-        Vector3 forwardMovement = Vector3.zero;
-        if (mainCamera != null)
-        {
-            // Pega a direção para frente da câmera (ignorando a componente Y para manter o movimento no plano horizontal)
-            Vector3 cameraForward = mainCamera.transform.forward;
-            cameraForward.y = 0;
-            cameraForward.Normalize();
-            
-            forwardMovement = cameraForward * speed;
-        }
-        else
-        {
-            // Fallback para o movimento original caso a câmera não seja encontrada
-            forwardMovement = Vector3.right * speed;
-        }
+        // --- CALCULA AS DIREÇÕES RELATIVAS À CÂMERA ---
+        Vector3 cameraForward = mainCamera.transform.forward;
+        Vector3 cameraRight = mainCamera.transform.right;
+        // Zera o Y para que o movimento seja sempre no plano horizontal
+        cameraForward.y = 0;
+        cameraRight.y = 0;
+        cameraForward.Normalize();
+        cameraRight.Normalize();
 
-        // --- GRAVIDADE E PULO (MOVIMENTO VERTICAL) ---
-        // Verifica se o personagem está no chão
-        bool isGrounded = characterController.isGrounded;
-        if (isGrounded)
+        // --- MOVIMENTO PARA FRENTE ---
+        Vector3 forwardVelocity = cameraForward * speed;
+
+        // Atualiza o ponto de referência para que ele se mova sempre para frente
+        centerPathPoint += forwardVelocity * Time.deltaTime;
+
+        // --- GRAVIDADE E PULO ---
+        if (characterController.isGrounded)
         {
-            // Se estiver no chão e caindo, reseta a velocidade vertical
             if (verticalVelocity < 0)
             {
-                verticalVelocity = -2f; // Uma pequena força para baixo para manter o personagem "colado"
+                verticalVelocity = -2f; // Mantém no chão
             }
         }
         else
         {
-            // Se estiver no ar, aplica a gravidade continuamente
             verticalVelocity -= gravity * Time.deltaTime;
         }
+        Vector3 verticalMovement = Vector3.up * verticalVelocity;
 
-        // --- COMBINA OS MOVIMENTOS ---
-        // Cria o vetor de movimento final combinando o avanço e a velocidade vertical
-        Vector3 finalMovement = forwardMovement;
-        finalMovement.y = verticalVelocity;
+        // --- MOVIMENTO LATERAL (CORREÇÃO DE FAIXA) ---
+        // Calcula a posição alvo exata onde o personagem deveria estar
+        Vector3 targetPosition = centerPathPoint + (currentLane * laneWidth * cameraRight);
 
-        // Aplica o movimento para frente e a gravidade usando o CharacterController
+        // Calcula o vetor necessário para ir da posição atual para a posição alvo
+        Vector3 correctionVector = targetPosition - playerTransform.position;
+        // Ignora a diferença de altura (Y), pois ela é controlada pela gravidade/pulo
+        correctionVector.y = 0;
+        
+        // Multiplicamos pela velocidade de troca de faixa para controlar a suavidade
+        Vector3 lateralVelocity = correctionVector * laneChangeSpeed;
+
+        // --- COMBINA TODOS OS VETORES DE MOVIMENTO ---
+        Vector3 finalMovement = forwardVelocity + verticalMovement + lateralVelocity;
+        
+        // Aplica o movimento final em uma única chamada
         characterController.Move(finalMovement * Time.deltaTime);
-
-        // --- MOVIMENTO LATERAL (Relativo à câmera) ---
-        HandleLateralMovement();
     }
-
-    private void HandleLateralMovement()
+    
+    // Unifiquei seus inputs em um único método para simplificar
+    public void OnMove(InputAction.CallbackContext context)
     {
-        // Só aplica movimento lateral se estiver em transição entre faixas
-        if (!isTransitioningLanes) return;
+        if (!context.performed) return;
 
-        if (mainCamera != null)
+        Vector2 input = context.ReadValue<Vector2>();
+
+        // Input Vertical (Pulo / Deslize)
+        if (input.y > 0.5f) Jump();
+        else if (input.y < -0.5f) Slider();
+
+        // Input Horizontal (Troca de Faixa)
+        if (Mathf.Abs(input.x) > 0.5f)
         {
-            Vector3 cameraRight = mainCamera.transform.right;
-            cameraRight.y = 0;
-            cameraRight.Normalize();
-
-            // Calcula a posição alvo da faixa baseada na direção da câmera
-            Vector3 laneOffset = cameraRight * (currentLane * laneWidth);
-            targetPosition = centerLanePosition + laneOffset;
-            targetPosition.y = playerTransform.position.y;
-            
-            // Move apenas no eixo lateral (direção da câmera)
-            Vector3 currentPos = playerTransform.position;
-            Vector3 currentLateralPos = Vector3.Project(currentPos - centerLanePosition, cameraRight) + centerLanePosition;
-            Vector3 newLateralPos = Vector3.Lerp(currentLateralPos, targetPosition, Time.deltaTime * laneChangeSpeed);
-            
-            // Aplica apenas o componente lateral, preservando movimento para frente
-            Vector3 lateralDifference = newLateralPos - currentLateralPos;
-            playerTransform.position += lateralDifference;
-            
-            // Verifica se chegou próximo o suficiente da posição alvo para parar a transição
-            float distanceToTarget = Vector3.Distance(Vector3.Project(playerTransform.position - centerLanePosition, cameraRight), Vector3.Project(targetPosition - centerLanePosition, cameraRight));
-            if (distanceToTarget < 0.1f)
-            {
-                isTransitioningLanes = false;
-            }
-        }
-        else
-        {
-            // Fallback para o movimento original caso a câmera não seja encontrada
-            targetPosition.z = currentLane * laneWidth;
-            targetPosition.x = playerTransform.position.x;
-            targetPosition.y = playerTransform.position.y;
-            
-            playerTransform.position = Vector3.Lerp(playerTransform.position, targetPosition, Time.deltaTime * laneChangeSpeed);
-        }
-    }
-
-    // --- FUNÇÕES CHAMADAS PELO PLAYER INPUT ---
-
-    public void OnMoveHorizontal(InputAction.CallbackContext context)
-    {
-        // Esta função deve ser chamada quando o jogador pressionar as teclas de movimento lateral (A/D, Setas)
-        if (context.performed)
-        {
-            // Armazena a faixa anterior para comparação
             int previousLane = currentLane;
+            if (input.x < 0) currentLane--;
+            else if (input.x > 0) currentLane++;
             
-            // Pega a direção do input (-1 para esquerda, 1 para direita)
-            float direction = context.ReadValue<Vector2>().x;
-
-            if (direction < 0)
-            {
-                currentLane--; // Move para a faixa da esquerda
-            }
-            else if (direction > 0)
-            {
-                currentLane++; // Move para a faixa da direita
-            }
-
-            // Garante que o valor de 'currentLane' fique sempre entre -1 e 1
             currentLane = Mathf.Clamp(currentLane, -1, 1);
-            
-            // Só inicia transição se realmente mudou de faixa
+
+            // Quando trocamos de faixa, ajustamos a referência central para a posição atual do jogador
+            // Isso evita que o personagem "deslize" para trás ou para frente ao trocar de faixa em uma curva
             if (currentLane != previousLane)
             {
-                // Atualiza a posição central baseada na posição atual do personagem
-                centerLanePosition = playerTransform.position;
-                isTransitioningLanes = true;
+                 centerPathPoint = playerTransform.position;
+                 Vector3 relativePos = playerTransform.position - centerPathPoint;
+                 Vector3 cameraRight = mainCamera.transform.right;
+                 cameraRight.y = 0;
+                 cameraRight.Normalize();
+                 float sideOffset = Vector3.Dot(relativePos, cameraRight);
+                 centerPathPoint -= cameraRight * sideOffset;
             }
         }
     }
-
-    public void OnMoveVertical(InputAction.CallbackContext context)
-    {
-        float direction = context.ReadValue<Vector2>().y;
-        if (context.performed)
-        {
-            if (direction > 0)
-            {
-                Debug.Log("Up action triggered");
-                Jump();
-            }
-            else if (direction < 0)
-            {
-                Debug.Log("Down action triggered");
-                Slider();
-            }
-        }
-    }
-
-    // --- LÓGICA DAS AÇÕES ---
 
     private void Jump()
     {
-        // O personagem só pode pular se estiver no chão
         if (characterController.isGrounded)
         {
-            // Define a velocidade vertical para a força do pulo, iniciando o movimento para cima
             verticalVelocity = jumpForce;
-
-            if (animator != null)
-            {
-                animator.SetTrigger("Jump");
-            }
+            animator?.SetTrigger("Jump");
         }
     }
 
     private void Slider()
     {
-        // TODO: Além da animação, você pode querer reduzir a altura do CharacterController aqui
-        if (animator != null)
-        {
-            animator.SetTrigger("Slider");
-        }
+        animator?.SetTrigger("Slider");
     }
-
-    // --- MÉTODOS PARA CONTROLE DO INPUT ---
-    public void DisableInput()
-    {
-        if (playerInput != null)
-        {
-            playerInput.DeactivateInput();
-        }
-    }
-
-    public void EnableInput()
-    {
-        if (playerInput != null)
-        {
-            playerInput.ActivateInput();
-        }
-    }
-
+    
+    // Os métodos de desabilitar input continuam os mesmos
+    public void DisableInput() => playerInput?.DeactivateInput();
+    public void EnableInput() => playerInput?.ActivateInput();
     public void DisableInputTemporarily(float duration)
     {
         DisableInput();
