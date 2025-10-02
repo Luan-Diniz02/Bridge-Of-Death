@@ -160,10 +160,13 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (characterController.isGrounded && animator != null)
+        if (characterController.isGrounded)
         {
             verticalVelocity = jumpForce;
-            animator.SetTrigger("Jump");
+            if (animator != null)
+            {
+                animator.SetTrigger("Jump");
+            }
         }
     }
 
