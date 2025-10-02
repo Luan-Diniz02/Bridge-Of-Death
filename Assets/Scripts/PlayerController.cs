@@ -6,11 +6,16 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
+    // MODIFICAÇÃO: Agora a movimentação é relativa à câmera principal
+    // - O movimento para frente segue a direção da câmera
+    // - O movimento lateral (faixas) é calculado baseado na orientação da câmera
+    // - Fallback para movimento original caso a câmera não seja encontrada
     // --- COMPONENTES E VARIÁVEIS PRINCIPAIS ---
     private CharacterController characterController;
     private PlayerInput playerInput;
     private Animator animator;
     private Transform playerTransform;
+    private Camera mainCamera;
 
     [Header("Configurações de Movimento")]
     [SerializeField] private float speed = 5f;
@@ -26,7 +31,8 @@ public class PlayerController : MonoBehaviour
     private int currentLane = 0; // -1: Esquerda, 0: Centro, 1: Direita
     private float verticalVelocity; // Guarda a velocidade vertical para pulo e gravidade
     private Vector3 targetPosition; // Posição alvo para o movimento lateral suave
-
+    private Vector3 centerLanePosition; // Posição de referência para a faixa central
+    private bool isTransitioningLanes = false; // Controla se está em transição entre faixas
 
     void Awake()
     {
@@ -35,19 +41,34 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
         playerTransform = transform;
+        mainCamera = Camera.main;
+        
+        // Se Camera.main não funcionar, tenta encontrar a primeira câmera ativa na cena
+        if (mainCamera == null)
+        {
+            mainCamera = FindObjectOfType<Camera>();
+        }
 
-            if (laneWidth > 0) // Evita uma possível divisão por zero
-                {
-                    currentLane = Mathf.RoundToInt(playerTransform.position.z / laneWidth);
-                }
-            else
-                {
-                    currentLane = 0;
-                }
-                
-
-        // Inicializa a posição alvo com a posição inicial do personagem
+        // Força o personagem a começar na faixa central (currentLane = 0)
+        currentLane = 0;
+        
+        // Inicializa a posição alvo e central com a posição inicial do personagem
         targetPosition = playerTransform.position;
+        centerLanePosition = playerTransform.position;
+        isTransitioningLanes = false;
+    }
+
+    void Start()
+    {
+        // Dupla verificação para garantir que a câmera foi encontrada
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+            if (mainCamera == null)
+            {
+                mainCamera = FindObjectOfType<Camera>();
+            }
+        }
     }
 
     void Update()
@@ -59,8 +80,22 @@ public class PlayerController : MonoBehaviour
     {
         if (characterController == null) return;
 
-        // --- MOVIMENTO PARA FRENTE (EIXO X, de acordo com sua gambiarra) ---
-        Vector3 forwardMovement = Vector3.right * speed;
+        // --- MOVIMENTO PARA FRENTE (Relativo à câmera) ---
+        Vector3 forwardMovement = Vector3.zero;
+        if (mainCamera != null)
+        {
+            // Pega a direção para frente da câmera (ignorando a componente Y para manter o movimento no plano horizontal)
+            Vector3 cameraForward = mainCamera.transform.forward;
+            cameraForward.y = 0;
+            cameraForward.Normalize();
+            
+            forwardMovement = cameraForward * speed;
+        }
+        else
+        {
+            // Fallback para o movimento original caso a câmera não seja encontrada
+            forwardMovement = Vector3.right * speed;
+        }
 
         // --- GRAVIDADE E PULO (MOVIMENTO VERTICAL) ---
         // Verifica se o personagem está no chão
@@ -87,17 +122,51 @@ public class PlayerController : MonoBehaviour
         // Aplica o movimento para frente e a gravidade usando o CharacterController
         characterController.Move(finalMovement * Time.deltaTime);
 
-        // --- MOVIMENTO LATERAL (EIXO Z) ---
-        // Calcula a posição Z alvo baseada na faixa atual (currentLane)
-        // A posição X e Y vem da posição atual do transform para não interferir com os outros movimentos
-        targetPosition.z = currentLane * laneWidth;
-        targetPosition.x = playerTransform.position.x;
-        targetPosition.y = playerTransform.position.y;
+        // --- MOVIMENTO LATERAL (Relativo à câmera) ---
+        HandleLateralMovement();
+    }
 
+    private void HandleLateralMovement()
+    {
+        // Só aplica movimento lateral se estiver em transição entre faixas
+        if (!isTransitioningLanes) return;
 
-        // Usa Lerp (Interpolação Linear) para mover suavemente a posição do personagem para a faixa alvo
-        // Isso cria a transição suave em vez de um "teleporte" instantâneo
-        playerTransform.position = Vector3.Lerp(playerTransform.position, targetPosition, Time.deltaTime * laneChangeSpeed);
+        if (mainCamera != null)
+        {
+            Vector3 cameraRight = mainCamera.transform.right;
+            cameraRight.y = 0;
+            cameraRight.Normalize();
+
+            // Calcula a posição alvo da faixa baseada na direção da câmera
+            Vector3 laneOffset = cameraRight * (currentLane * laneWidth);
+            targetPosition = centerLanePosition + laneOffset;
+            targetPosition.y = playerTransform.position.y;
+            
+            // Move apenas no eixo lateral (direção da câmera)
+            Vector3 currentPos = playerTransform.position;
+            Vector3 currentLateralPos = Vector3.Project(currentPos - centerLanePosition, cameraRight) + centerLanePosition;
+            Vector3 newLateralPos = Vector3.Lerp(currentLateralPos, targetPosition, Time.deltaTime * laneChangeSpeed);
+            
+            // Aplica apenas o componente lateral, preservando movimento para frente
+            Vector3 lateralDifference = newLateralPos - currentLateralPos;
+            playerTransform.position += lateralDifference;
+            
+            // Verifica se chegou próximo o suficiente da posição alvo para parar a transição
+            float distanceToTarget = Vector3.Distance(Vector3.Project(playerTransform.position - centerLanePosition, cameraRight), Vector3.Project(targetPosition - centerLanePosition, cameraRight));
+            if (distanceToTarget < 0.1f)
+            {
+                isTransitioningLanes = false;
+            }
+        }
+        else
+        {
+            // Fallback para o movimento original caso a câmera não seja encontrada
+            targetPosition.z = currentLane * laneWidth;
+            targetPosition.x = playerTransform.position.x;
+            targetPosition.y = playerTransform.position.y;
+            
+            playerTransform.position = Vector3.Lerp(playerTransform.position, targetPosition, Time.deltaTime * laneChangeSpeed);
+        }
     }
 
     // --- FUNÇÕES CHAMADAS PELO PLAYER INPUT ---
@@ -107,6 +176,9 @@ public class PlayerController : MonoBehaviour
         // Esta função deve ser chamada quando o jogador pressionar as teclas de movimento lateral (A/D, Setas)
         if (context.performed)
         {
+            // Armazena a faixa anterior para comparação
+            int previousLane = currentLane;
+            
             // Pega a direção do input (-1 para esquerda, 1 para direita)
             float direction = context.ReadValue<Vector2>().x;
 
@@ -121,6 +193,14 @@ public class PlayerController : MonoBehaviour
 
             // Garante que o valor de 'currentLane' fique sempre entre -1 e 1
             currentLane = Mathf.Clamp(currentLane, -1, 1);
+            
+            // Só inicia transição se realmente mudou de faixa
+            if (currentLane != previousLane)
+            {
+                // Atualiza a posição central baseada na posição atual do personagem
+                centerLanePosition = playerTransform.position;
+                isTransitioningLanes = true;
+            }
         }
     }
 
@@ -139,24 +219,6 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("Down action triggered");
                 Slider();
             }
-        }
-    }
-
-    public void OnJump(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            Debug.Log("Jump action triggered");
-            Jump();
-        }
-    }
-
-    public void OnSlide(InputAction.CallbackContext context)
-    {
-        if (context.performed)
-        {
-            Debug.Log("Slide action triggered");
-            Slider();
         }
     }
 
