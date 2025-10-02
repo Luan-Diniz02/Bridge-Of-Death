@@ -64,6 +64,8 @@ public class PlayerController : MonoBehaviour
         Vector3 cameraRight = mainCamera.transform.right;
         cameraForward.y = 0;
         cameraRight.y = 0;
+        cameraForward.x = 0;
+        cameraRight.x = 0;
         cameraForward.Normalize();
         cameraRight.Normalize();
 
@@ -141,13 +143,17 @@ public class PlayerController : MonoBehaviour
         targetLanePosition.x += currentLane * laneWidth;
         
         Vector3 currentPos = playerTransform.position;
-        currentPos.x = Mathf.MoveTowards(currentPos.x, targetLanePosition.x, laneChangeSpeed * Time.deltaTime);
+        
+        // Usa Lerp para movimento mais suave
+        float smoothTime = laneChangeSpeed * Time.deltaTime;
+        currentPos.x = Mathf.Lerp(currentPos.x, targetLanePosition.x, smoothTime);
         
         playerTransform.position = new Vector3(currentPos.x, playerTransform.position.y, playerTransform.position.z);
         
-        // Para o movimento quando chegar na posição target
-        if (Mathf.Approximately(currentPos.x, targetLanePosition.x))
+        // Para o movimento quando chegar próximo da posição target (threshold maior para suavidade)
+        if (Mathf.Abs(currentPos.x - targetLanePosition.x) < 0.1f)
         {
+            playerTransform.position = new Vector3(targetLanePosition.x, playerTransform.position.y, playerTransform.position.z);
             isChangingLane = false;
         }
     }
