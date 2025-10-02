@@ -125,16 +125,16 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        if (characterController.isGrounded)
+        if (characterController.isGrounded && animator != null)
         {
             verticalVelocity = jumpForce;
-            animator?.SetTrigger("Jump");
+            animator.SetTrigger("Jump");
         }
     }
 
     private void Slider()
     {
-        animator?.SetTrigger("Slider");
+        if (animator != null) animator.SetTrigger("Slider");
     }
 
     private void MoveLane()
@@ -158,8 +158,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void DisableInput() => playerInput?.DeactivateInput();
-    public void EnableInput() => playerInput?.ActivateInput();
+    public void DisableInput() {
+        if (playerInput != null) {
+            playerInput.DeactivateInput();
+        }
+    }
+
+    public void EnableInput() {
+        if (playerInput != null) {
+            playerInput.ActivateInput();
+        }
+    }
     public void DisableInputTemporarily(float duration)
     {
         DisableInput();

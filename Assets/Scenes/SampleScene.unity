@@ -150,6 +150,11 @@ PrefabInstance:
       propertyPath: laneWidth
       value: 1.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2810628924596815443, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
+      propertyPath: laneChangeSpeed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 3115056731236493103, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
       propertyPath: m_ActionEvents.Array.size
