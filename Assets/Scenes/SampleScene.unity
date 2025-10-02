@@ -142,6 +142,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2810628924596815443, guid: 13db973f16e9c6e46b2704a74b321135,
         type: 3}
+      propertyPath: jumpForce
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2810628924596815443, guid: 13db973f16e9c6e46b2704a74b321135,
+        type: 3}
       propertyPath: laneWidth
       value: 2
       objectReference: {fileID: 0}
