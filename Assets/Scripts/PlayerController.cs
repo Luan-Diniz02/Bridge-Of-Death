@@ -43,14 +43,6 @@ public class PlayerController : MonoBehaviour
         initialPosition = playerTransform.position;
     }
 
-    void Start()
-    {
-        if (mainCamera == null)
-        {
-            mainCamera = FindObjectOfType<Camera>();
-        }
-    }
-
     void Update()
     {
         HandleMovement();
