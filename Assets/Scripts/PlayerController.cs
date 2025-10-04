@@ -110,16 +110,18 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 GetCameraForwardDirection()
     {
-        // --- CALCULA AS DIREÇÕES RELATIVAS À CÂMERA ---
         Vector3 cameraForward = mainCamera.transform.forward;
-        Vector3 cameraRight = mainCamera.transform.right;
         cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward.x = 0;
-        cameraRight.x = 0;
         cameraForward.Normalize();
-        cameraRight.Normalize();
         return cameraForward;
+    }
+
+    private Vector3 GetCameraRightDirection()
+    {
+        Vector3 cameraRight = mainCamera.transform.right;
+        cameraRight.y = 0;
+        cameraRight.Normalize();
+        return cameraRight;
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -135,10 +137,21 @@ public class PlayerController : MonoBehaviour
         // Input Horizontal (Troca de Faixa)
         if (Mathf.Abs(input.x) > 0f && !isChangingLane)
         {
+            Vector3 cameraRight = GetCameraRightDirection();
+            
             int newLane = currentLane;
             
-            if (input.x < 0) newLane--;
-            else if (input.x > 0) newLane++;
+            // Determina a direção baseada na orientação da câmera
+            float dotProduct = Vector3.Dot(cameraRight, Vector3.right);
+            
+            if (input.x < 0)
+            {
+                newLane += (dotProduct > 0) ? -1 : 1;
+            }
+            else if (input.x > 0)
+            {
+                newLane += (dotProduct > 0) ? 1 : -1;
+            }
 
             newLane = Mathf.Clamp(newLane, -1, 1);
             
