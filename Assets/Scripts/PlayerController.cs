@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
     private Animator animator;
     private Transform playerTransform;
-    private Camera mainCamera;
+    [SerializeField] private Camera mainCamera;
 
     [Header("Configurações de Movimento")]
     [SerializeField] private float speed = 5f;
@@ -39,7 +39,9 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
         playerTransform = transform;
-        mainCamera = Camera.main;
+        if(mainCamera == null) {
+            mainCamera = Camera.main;
+        }
         initialPosition = playerTransform.position;
     }
 
