@@ -4,6 +4,7 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private GameObject player;
+    [SerializeField] private float speedEnemy = 3f;
     private Transform playerTransform;
     private Transform enemyTransform;
     private Animator enemyAnimator;    
@@ -24,15 +25,22 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /* distanceToPlayer = GetDistanceToPlayer();
-        //Debug.Log("Distance to Player: " + distanceToPlayer);
+        MoveTowardsPlayer();
+    }
 
-        attackTimer += Time.deltaTime;
-        if (distanceToPlayer < 2.0f && attackTimer >= delayAttack)
+    private void MoveTowardsPlayer()
+    {
+        distanceToPlayer = GetDistanceToPlayer();
+        if (distanceToPlayer > 2f)
         {
-            enemyAnimator.SetTrigger("Attack");
-            attackTimer = 0.0f;
-        } */
+            Vector3 direction = (playerTransform.position - enemyTransform.position).normalized;
+            enemyTransform.position += direction * speedEnemy * Time.deltaTime;
+            enemyAnimator.SetFloat("Speed", 1f);
+        }
+        else
+        {
+            enemyAnimator.SetFloat("Speed", 0f);
+        }
     }
 
     private float GetDistanceToPlayer()
@@ -45,6 +53,7 @@ public class EnemyController : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("Enemy collided with Player!");
+            enemyAnimator.SetFloat("Speed", 0f);
             enemyAnimator.SetTrigger("Attack");
             playerController.DamagePlayer();
             enemyCollider.enabled = false;
