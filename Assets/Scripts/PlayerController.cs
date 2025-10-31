@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     private Animator animator;
     private Transform playerTransform;
     [SerializeField] private Camera mainCamera;
+    private CameraController cameraController;
 
     [Header("Configurações de Movimento")]
     [SerializeField] private float speed = 5f;
@@ -50,6 +51,7 @@ public class PlayerController : MonoBehaviour
         }
         initialPosition = playerTransform.position;
         currentHealth = maxHealth;
+        cameraController = GetComponent<CameraController>();
     }
 
     void Update()
@@ -216,6 +218,7 @@ public class PlayerController : MonoBehaviour
             dead = true;
             animator.SetTrigger("Dead");
             DisableInput();
+            cameraController.ActivateDeathCamera();
         }
     }
 
