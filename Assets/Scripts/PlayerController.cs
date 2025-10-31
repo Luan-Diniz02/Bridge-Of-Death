@@ -17,10 +17,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed = 5f;
     [SerializeField] private float jumpForce = 8f;
     [SerializeField] private float gravity = 18f;
+    [SerializeField] private bool allowMovement = true;
 
     [Header("Configurações de Faixa (Lane)")]
     [SerializeField] private float laneWidth = 3f;
     [SerializeField] private float laneChangeSpeed = 10f;
+
+    [Header("Configurações de vida")]
+    [SerializeField] private int maxHealth = 3;
+    [SerializeField] private int currentHealth;
+    [SerializeField] private bool dead = false;
 
     // --- ESTADO INTERNO DO JOGADOR ---
     private int currentLane = 0; // -1: Esquerda, 0: Centro, 1: Direita
@@ -43,6 +49,7 @@ public class PlayerController : MonoBehaviour
             mainCamera = Camera.main;
         }
         initialPosition = playerTransform.position;
+        currentHealth = maxHealth;
     }
 
     void Update()
@@ -56,6 +63,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 cameraForward = GetCameraForwardDirection();
 
+        if (!allowMovement) return;
         // --- MOVIMENTO PARA FRENTE ---
         forwardVelocity = cameraForward * speed;
 
@@ -180,6 +188,17 @@ public class PlayerController : MonoBehaviour
     private void Slider()
     {
         if (animator != null) animator.SetTrigger("Slider");
+    }
+
+    public void DamagePlayer()
+    {
+        currentHealth--;
+        if (currentHealth <= 0)
+        {
+            dead = true;
+            animator.SetTrigger("Dead");
+            DisableInput();
+        }
     }
 
     public void DisableInput() {
