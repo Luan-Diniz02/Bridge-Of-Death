@@ -62,8 +62,8 @@ public class PlayerController : MonoBehaviour
         if (characterController == null || mainCamera == null) return;
 
         Vector3 cameraForward = GetCameraForwardDirection();
+        bool flowControl = CheckMovementAllowed();
 
-        if (!allowMovement) return;
         // --- MOVIMENTO PARA FRENTE ---
         forwardVelocity = cameraForward * speed;
 
@@ -72,9 +72,26 @@ public class PlayerController : MonoBehaviour
 
         verticalVelocityVector = Vector3.up * verticalVelocity;
 
+        if (!flowControl) return;
+ 
         // --- COMBINA TODOS OS MOVIMENTOS EM UMA ÚNICA CHAMADA ---
         targetPosition = forwardVelocity + horizontalVelocity + verticalVelocityVector;
         characterController.Move(targetPosition * Time.deltaTime);
+    }
+
+    private bool CheckMovementAllowed()
+    {
+        if (!allowMovement || dead)
+        {
+            animator.SetFloat("Speed", 0);
+            return false;
+        }
+        else
+        {
+            animator.SetFloat("Speed", 1);
+        }
+
+        return true;
     }
 
     private void UpdateGravityAndJump()
@@ -193,6 +210,7 @@ public class PlayerController : MonoBehaviour
     public void DamagePlayer()
     {
         currentHealth--;
+        Debug.Log("Player Health: " + currentHealth);
         if (currentHealth <= 0)
         {
             dead = true;

@@ -8,35 +8,46 @@ public class EnemyController : MonoBehaviour
     private Transform enemyTransform;
     private Animator enemyAnimator;    
     private float distanceToPlayer;
-
+    private PlayerController playerController;
+    private Collider enemyCollider;
 
     void Awake()
     {
         playerTransform = player.transform;
+        playerController = player.GetComponent<PlayerController>();
         enemyTransform = transform;
-        enemyAnimator = enemyTransform.GetComponent<Animator>();
-    }
+        enemyAnimator = enemyTransform.GetComponent<Animator>();            
+        enemyCollider = GetComponent<Collider>();
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-        distanceToPlayer = GetDistanceToPlayer();
-        Debug.Log("Distance to Player: " + distanceToPlayer);
+        /* distanceToPlayer = GetDistanceToPlayer();
+        //Debug.Log("Distance to Player: " + distanceToPlayer);
 
-        if (distanceToPlayer < 2.0f)
+        attackTimer += Time.deltaTime;
+        if (distanceToPlayer < 2.0f && attackTimer >= delayAttack)
         {
             enemyAnimator.SetTrigger("Attack");
-        }
+            attackTimer = 0.0f;
+        } */
     }
-    
+
     private float GetDistanceToPlayer()
     {
         return Vector3.Distance(enemyTransform.position, playerTransform.position);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            Debug.Log("Enemy collided with Player!");
+            enemyAnimator.SetTrigger("Attack");
+            playerController.DamagePlayer();
+            enemyCollider.enabled = false;
+        }
     }
 }

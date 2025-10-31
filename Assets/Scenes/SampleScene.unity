@@ -1165,9 +1165,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: Luan3D
       objectReference: {fileID: 0}
+    - target: {fileID: 6382280520658541037, guid: 01164be779472854e891078a30269323,
+        type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
     - target: {fileID: 9117134734490032446, guid: 01164be779472854e891078a30269323,
         type: 3}
       propertyPath: speed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9117134734490032446, guid: 01164be779472854e891078a30269323,
+        type: 3}
+      propertyPath: maxHealth
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9117134734490032446, guid: 01164be779472854e891078a30269323,
+        type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 330585545}
+    - target: {fileID: 9117134734490032446, guid: 01164be779472854e891078a30269323,
+        type: 3}
+      propertyPath: allowMovement
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
