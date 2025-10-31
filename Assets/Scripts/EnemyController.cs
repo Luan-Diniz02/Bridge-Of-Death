@@ -34,6 +34,8 @@ public class EnemyController : MonoBehaviour
         if (distanceToPlayer > 2f)
         {
             Vector3 direction = (playerTransform.position - enemyTransform.position).normalized;
+            direction.x = 0;
+            direction.y = 0;
             enemyTransform.position += direction * speedEnemy * Time.deltaTime;
             enemyAnimator.SetFloat("Speed", 1f);
         }
@@ -52,11 +54,16 @@ public class EnemyController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Enemy collided with Player!");
-            enemyAnimator.SetFloat("Speed", 0f);
-            enemyAnimator.SetTrigger("Attack");
-            playerController.DamagePlayer();
-            enemyCollider.enabled = false;
+            TriggerEnemyAttack();
         }
+    }
+
+    private void TriggerEnemyAttack()
+    {
+        Debug.Log("Enemy collided with Player!");
+        enemyAnimator.SetFloat("Speed", 0f);
+        enemyAnimator.SetTrigger("Attack");
+        playerController.DamagePlayer();
+        enemyCollider.enabled = false;
     }
 }

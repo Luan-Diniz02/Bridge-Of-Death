@@ -1003,6 +1003,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   virtualCamera: {fileID: 221751058}
   deathCamera: {fileID: 1887190903}
+  mainCamera: {fileID: 330585545}
 --- !u!4 &1339986876 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8248142958751824787, guid: a6fdf8a4748b03b4d9b59f5448a27177,
@@ -1375,7 +1376,8 @@ PrefabInstance:
       propertyPath: allowMovement
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8072146486022884222, guid: 01164be779472854e891078a30269323, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 6042065970884707159, guid: 01164be779472854e891078a30269323,

@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(CameraController))]
 public class PlayerController : MonoBehaviour
 {
     // --- COMPONENTES E REFERÊNCIAS ---
@@ -11,7 +12,6 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
     private Animator animator;
     private Transform playerTransform;
-    [SerializeField] private Camera mainCamera;
     private CameraController cameraController;
 
     [Header("Configurações de Movimento")]
@@ -45,13 +45,11 @@ public class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
+        cameraController = GetComponent<CameraController>();
+
         playerTransform = transform;
-        if(mainCamera == null) {
-            mainCamera = Camera.main;
-        }
         initialPosition = playerTransform.position;
         currentHealth = maxHealth;
-        cameraController = GetComponent<CameraController>();
     }
 
     void Update()
@@ -61,9 +59,9 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMovement()
     {
-        if (characterController == null || mainCamera == null) return;
+        if (characterController == null || cameraController == null) return;
 
-        Vector3 cameraForward = GetCameraForwardDirection();
+        Vector3 cameraForward = cameraController.GetCameraForwardDirection();
         bool flowControl = CheckMovementAllowed();
 
         // --- MOVIMENTO PARA FRENTE ---
@@ -137,22 +135,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private Vector3 GetCameraForwardDirection()
-    {
-        Vector3 cameraForward = mainCamera.transform.forward;
-        cameraForward.y = 0;
-        cameraForward.Normalize();
-        return cameraForward;
-    }
-
-    private Vector3 GetCameraRightDirection()
-    {
-        Vector3 cameraRight = mainCamera.transform.right;
-        cameraRight.y = 0;
-        cameraRight.Normalize();
-        return cameraRight;
-    }
-
     public void OnMove(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -166,7 +148,7 @@ public class PlayerController : MonoBehaviour
         // Input Horizontal (Troca de Faixa)
         if (Mathf.Abs(input.x) > 0f && !isChangingLane)
         {
-            Vector3 cameraRight = GetCameraRightDirection();
+            Vector3 cameraRight = cameraController.GetCameraRightDirection();
             
             int newLane = currentLane;
             
