@@ -827,7 +827,7 @@ MonoBehaviour:
   zPosition:
   - -110
   - 195
-  enemyCount: 15
+  enemyCount: 30
 --- !u!4 &769737403
 Transform:
   m_ObjectHideFlags: 0
@@ -1327,12 +1327,12 @@ PrefabInstance:
     - target: {fileID: 617759253295929057, guid: 3073afd28b7a96e439cb9e5b59804290,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 17.747831
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 617759253295929057, guid: 3073afd28b7a96e439cb9e5b59804290,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 195.92
+      value: -13359
       objectReference: {fileID: 0}
     - target: {fileID: 617759253295929057, guid: 3073afd28b7a96e439cb9e5b59804290,
         type: 3}
@@ -1384,6 +1384,11 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1000509363}
+    - target: {fileID: 6126414975681019049, guid: 3073afd28b7a96e439cb9e5b59804290,
+        type: 3}
+      propertyPath: speedEnemy
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
