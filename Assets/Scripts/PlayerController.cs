@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         HandleMovement();
+        StartCoroutine(increaseSpeedOverTime(0.1f, 1f));
     }
 
     private void HandleMovement()
@@ -219,6 +220,22 @@ public class PlayerController : MonoBehaviour
         isInvincible = true;
         yield return new WaitForSeconds(invincibilityDuration);
         isInvincible = false;
+    }
+
+    private IEnumerator increaseSpeedOverTime(float amount, float duration)
+    {
+        float elapsed = 0f;
+        float initialSpeed = speed;
+        float targetSpeed = initialSpeed + amount;
+
+        while (elapsed < duration)
+        {
+            speed = Mathf.Lerp(initialSpeed, targetSpeed, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        speed = targetSpeed;
     }
 
     public void DisableInput() {

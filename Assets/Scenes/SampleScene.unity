@@ -818,7 +818,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b1184e6ef749644a968613d1a373a29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawn
-  enemyPrefab: {fileID: 4803014352309999506}
+  objectPrefab: {fileID: 4803014352309999506}
   yPosition: 17.74783
   xPosition:
   - -8.1
@@ -827,8 +827,8 @@ MonoBehaviour:
   zPosition:
   - -110
   - 195
-  enemyCount: 30
-  SpawnEnemyRoutineEnabled: 1
+  totalObjects: 10
+  SpawnRoutineEnabled: 1
 --- !u!4 &769737403
 Transform:
   m_ObjectHideFlags: 0
@@ -873,7 +873,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b1184e6ef749644a968613d1a373a29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawn
-  enemyPrefab: {fileID: 8174384546175104360, guid: 0bc6e79865fe4984bbb837df5da55935,
+  objectPrefab: {fileID: 8174384546175104360, guid: 0bc6e79865fe4984bbb837df5da55935,
     type: 3}
   yPosition: 17.74783
   xPosition:
@@ -883,8 +883,8 @@ MonoBehaviour:
   zPosition:
   - -110
   - 195
-  enemyCount: 30
-  SpawnEnemyRoutineEnabled: 0
+  totalObjects: 10
+  SpawnRoutineEnabled: 0
 --- !u!4 &781477556
 Transform:
   m_ObjectHideFlags: 0
