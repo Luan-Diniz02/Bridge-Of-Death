@@ -202,6 +202,9 @@ public class PlayerController : MonoBehaviour
             DisableInput();
             cameraController.ActivateDeathCamera();
         }
+        else{
+            animator.SetTrigger("Hit");
+        }
     }
 
     public void DisableInput() {
