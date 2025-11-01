@@ -51,5 +51,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Dead-Bridge.sln"
+    "dotnet.defaultSolution": "Bridge Of Death.sln"
 }
