@@ -2,50 +2,50 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemySpawn : MonoBehaviour
+public class SpawnManager : MonoBehaviour
 {
-    [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private GameObject objectPrefab;
     [SerializeField] private float yPosition;
     [SerializeField] private float[] xPosition, zPosition;
-    [SerializeField] private int enemyCount = 10;
-    [SerializeField] private bool SpawnEnemyRoutineEnabled = true;
+    [SerializeField] private int totalObjects = 10;
+    [SerializeField] private bool SpawnRoutineEnabled = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        InitializeEnemySpawn();
-        if (SpawnEnemyRoutineEnabled) StartCoroutine(SpawnEnemyRoutine());
+        InitializeSpawn();
+        if (SpawnRoutineEnabled) StartCoroutine(SpawnRoutine());
     }
 
-    private void InitializeEnemySpawn()
+    private void InitializeSpawn()
     {
-        for (int i = 0; i < enemyCount; i++)
+        for (int i = 0; i < totalObjects; i++)
         {
-            SpawnEnemyRandomZ();
+            SpawnObjectAtRandomZ();
         }
     }
 
-    private void SpawnEnemyRandomZ()
+    private void SpawnObjectAtRandomZ()
     {
         float spawnZ = Random.Range(zPosition[0], zPosition[1]);
         float spawnX = xPosition[Random.Range(0, xPosition.Length)];
         Vector3 spawnPosition = new(spawnX, yPosition, spawnZ);
-        Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        Instantiate(objectPrefab, spawnPosition, Quaternion.identity);
     }
 
-    private void SpawnEnemy()
+    private void SpawnObject()
     {
         float spawnZ = zPosition[0];
         float spawnX = xPosition[Random.Range(0, xPosition.Length)];
         Vector3 spawnPosition = new(spawnX, yPosition, spawnZ);
-        Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        Instantiate(objectPrefab, spawnPosition, Quaternion.identity);
     }
 
-    private IEnumerator SpawnEnemyRoutine()
+    private IEnumerator SpawnRoutine()
     {
         while (true)
         {
-            SpawnEnemy();
+            SpawnObject();
             yield return new WaitForSeconds(2f);
         }
     }
