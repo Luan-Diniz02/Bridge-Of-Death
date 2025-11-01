@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
+
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
@@ -28,6 +30,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private int currentHealth;
     [SerializeField] private bool dead = false;
+    [SerializeField] private float invincibilityDuration = 1.5f;
+    [SerializeField] private bool isInvincible = false;
 
     // --- ESTADO INTERNO DO JOGADOR ---
     private int currentLane = 0; // -1: Esquerda, 0: Centro, 1: Direita
@@ -193,6 +197,7 @@ public class PlayerController : MonoBehaviour
 
     public void DamagePlayer()
     {
+        if (isInvincible || dead) return;
         currentHealth--;
         Debug.Log("Player Health: " + currentHealth);
         if (currentHealth <= 0)
@@ -202,9 +207,18 @@ public class PlayerController : MonoBehaviour
             DisableInput();
             cameraController.ActivateDeathCamera();
         }
-        else{
+        else
+        {
             animator.SetTrigger("Hit");
         }
+        StartCoroutine(InvincibilityCoroutine());
+    }
+
+    private IEnumerator InvincibilityCoroutine()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibilityDuration);
+        isInvincible = false;
     }
 
     public void DisableInput() {
@@ -222,5 +236,14 @@ public class PlayerController : MonoBehaviour
     {
         DisableInput();
         Invoke(nameof(EnableInput), duration);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Obstacle"))
+        {
+            DamagePlayer();
+            Destroy(other.gameObject);
+        }
     }
 }

@@ -8,12 +8,13 @@ public class EnemySpawn : MonoBehaviour
     [SerializeField] private float yPosition;
     [SerializeField] private float[] xPosition, zPosition;
     [SerializeField] private int enemyCount = 10;
+    [SerializeField] private bool SpawnEnemyRoutineEnabled = true;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         InitializeEnemySpawn();
-        StartCoroutine(SpawnEnemyRoutine());
+        if (SpawnEnemyRoutineEnabled) StartCoroutine(SpawnEnemyRoutine());
     }
 
     private void InitializeEnemySpawn()
