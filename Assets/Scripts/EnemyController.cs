@@ -5,18 +5,21 @@ public class EnemyController : MonoBehaviour
 {
     [SerializeField] private GameObject player;
     [SerializeField] private float speedEnemy = 3f;
+    [SerializeField] private float detectionRange = 5f;
+    [SerializeField] private float timeToDestroy = 5f;
     private Transform playerTransform;
     private Transform enemyTransform;
     private Animator enemyAnimator;    
     private float distanceToPlayer;
     private PlayerController playerController;
     private Collider enemyCollider;
+    private bool hasNearbyPlayer = false;
 
     void Awake()
     {
-        playerTransform = player.transform;
-        playerController = player.GetComponent<PlayerController>();
+        playerTransform = player.transform;        
         enemyTransform = transform;
+        playerController = player.GetComponent<PlayerController>();
         enemyAnimator = enemyTransform.GetComponent<Animator>();            
         enemyCollider = GetComponent<Collider>();
 
@@ -25,24 +28,25 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (!hasNearbyPlayer) CheckPlayerProximity();
         MoveTowardsPlayer();
+    }
+
+    private void CheckPlayerProximity()
+    {
+        distanceToPlayer = GetDistanceToPlayer();
+        if (distanceToPlayer <= detectionRange)
+        {
+            hasNearbyPlayer = true;
+            Destroy(gameObject, timeToDestroy);
+        }
     }
 
     private void MoveTowardsPlayer()
     {
-        distanceToPlayer = GetDistanceToPlayer();
-        if (distanceToPlayer > 2f)
-        {
-            Vector3 direction = (playerTransform.position - enemyTransform.position).normalized;
-            direction.x = 0;
-            direction.y = 0;
-            enemyTransform.position += direction * speedEnemy * Time.deltaTime;
-            enemyAnimator.SetFloat("Speed", 1f);
-        }
-        else
-        {
-            enemyAnimator.SetFloat("Speed", 0f);
-        }
+        Vector3 direction = Vector3.forward;
+        enemyTransform.position += direction * speedEnemy * Time.deltaTime;
+        enemyAnimator.SetFloat("Speed", 1f);
     }
 
     private float GetDistanceToPlayer()
@@ -60,8 +64,8 @@ public class EnemyController : MonoBehaviour
 
     private void TriggerEnemyAttack()
     {
-        Debug.Log("Enemy collided with Player!");
-        enemyAnimator.SetFloat("Speed", 0f);
+        Debug.Log("Enemy collided with Player!");   
+        enemyAnimator.SetFloat("Speed", 0f);         
         enemyAnimator.SetTrigger("Attack");
         playerController.DamagePlayer();
         enemyCollider.enabled = false;
