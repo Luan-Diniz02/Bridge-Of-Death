@@ -1,9 +1,12 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
+
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerInput))]
+[RequireComponent(typeof(CameraController))]
 public class PlayerController : MonoBehaviour
 {
     // --- COMPONENTES E REFERÊNCIAS ---
@@ -11,16 +14,24 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
     private Animator animator;
     private Transform playerTransform;
-    private Camera mainCamera;
+    private CameraController cameraController;
 
     [Header("Configurações de Movimento")]
     [SerializeField] private float speed = 5f;
     [SerializeField] private float jumpForce = 8f;
     [SerializeField] private float gravity = 18f;
+    [SerializeField] private bool allowMovement = true;
 
     [Header("Configurações de Faixa (Lane)")]
     [SerializeField] private float laneWidth = 3f;
     [SerializeField] private float laneChangeSpeed = 10f;
+
+    [Header("Configurações de vida")]
+    [SerializeField] private int maxHealth = 3;
+    [SerializeField] private int currentHealth;
+    [SerializeField] private bool dead = false;
+    [SerializeField] private float invincibilityDuration = 1.5f;
+    [SerializeField] private bool isInvincible = false;
 
     // --- ESTADO INTERNO DO JOGADOR ---
     private int currentLane = 0; // -1: Esquerda, 0: Centro, 1: Direita
@@ -38,29 +49,25 @@ public class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
-        playerTransform = transform;
-        mainCamera = Camera.main;
-        initialPosition = playerTransform.position;
-    }
+        cameraController = GetComponent<CameraController>();
 
-    void Start()
-    {
-        if (mainCamera == null)
-        {
-            mainCamera = FindObjectOfType<Camera>();
-        }
+        playerTransform = transform;
+        initialPosition = playerTransform.position;
+        currentHealth = maxHealth;
     }
 
     void Update()
     {
         HandleMovement();
+        StartCoroutine(increaseSpeedOverTime(0.1f, 1f));
     }
 
     private void HandleMovement()
     {
-        if (characterController == null || mainCamera == null) return;
+        if (characterController == null || cameraController == null) return;
 
-        Vector3 cameraForward = GetCameraForwardDirection();
+        Vector3 cameraForward = cameraController.GetCameraForwardDirection();
+        bool flowControl = CheckMovementAllowed();
 
         // --- MOVIMENTO PARA FRENTE ---
         forwardVelocity = cameraForward * speed;
@@ -70,9 +77,26 @@ public class PlayerController : MonoBehaviour
 
         verticalVelocityVector = Vector3.up * verticalVelocity;
 
+        if (!flowControl) return;
+ 
         // --- COMBINA TODOS OS MOVIMENTOS EM UMA ÚNICA CHAMADA ---
         targetPosition = forwardVelocity + horizontalVelocity + verticalVelocityVector;
         characterController.Move(targetPosition * Time.deltaTime);
+    }
+
+    private bool CheckMovementAllowed()
+    {
+        if (!allowMovement || dead)
+        {
+            animator.SetFloat("Speed", 0);
+            return false;
+        }
+        else
+        {
+            animator.SetFloat("Speed", 1);
+        }
+
+        return true;
     }
 
     private void UpdateGravityAndJump()
@@ -116,20 +140,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private Vector3 GetCameraForwardDirection()
-    {
-        // --- CALCULA AS DIREÇÕES RELATIVAS À CÂMERA ---
-        Vector3 cameraForward = mainCamera.transform.forward;
-        Vector3 cameraRight = mainCamera.transform.right;
-        cameraForward.y = 0;
-        cameraRight.y = 0;
-        cameraForward.x = 0;
-        cameraRight.x = 0;
-        cameraForward.Normalize();
-        cameraRight.Normalize();
-        return cameraForward;
-    }
-
     public void OnMove(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -143,10 +153,21 @@ public class PlayerController : MonoBehaviour
         // Input Horizontal (Troca de Faixa)
         if (Mathf.Abs(input.x) > 0f && !isChangingLane)
         {
+            Vector3 cameraRight = cameraController.GetCameraRightDirection();
+            
             int newLane = currentLane;
             
-            if (input.x < 0) newLane--;
-            else if (input.x > 0) newLane++;
+            // Determina a direção baseada na orientação da câmera
+            float dotProduct = Vector3.Dot(cameraRight, Vector3.right);
+            
+            if (input.x < 0)
+            {
+                newLane += (dotProduct > 0) ? -1 : 1;
+            }
+            else if (input.x > 0)
+            {
+                newLane += (dotProduct > 0) ? 1 : -1;
+            }
 
             newLane = Mathf.Clamp(newLane, -1, 1);
             
@@ -175,6 +196,48 @@ public class PlayerController : MonoBehaviour
         if (animator != null) animator.SetTrigger("Slider");
     }
 
+    public void DamagePlayer()
+    {
+        if (isInvincible || dead) return;
+        currentHealth--;
+        Debug.Log("Player Health: " + currentHealth);
+        if (currentHealth <= 0)
+        {
+            dead = true;
+            animator.SetTrigger("Dead");
+            DisableInput();
+            cameraController.ActivateDeathCamera();
+        }
+        else
+        {
+            animator.SetTrigger("Hit");
+        }
+        StartCoroutine(InvincibilityCoroutine());
+    }
+
+    private IEnumerator InvincibilityCoroutine()
+    {
+        isInvincible = true;
+        yield return new WaitForSeconds(invincibilityDuration);
+        isInvincible = false;
+    }
+
+    private IEnumerator increaseSpeedOverTime(float amount, float duration)
+    {
+        float elapsed = 0f;
+        float initialSpeed = speed;
+        float targetSpeed = initialSpeed + amount;
+
+        while (elapsed < duration)
+        {
+            speed = Mathf.Lerp(initialSpeed, targetSpeed, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        speed = targetSpeed;
+    }
+
     public void DisableInput() {
         if (playerInput != null) {
             playerInput.DeactivateInput();
@@ -190,5 +253,14 @@ public class PlayerController : MonoBehaviour
     {
         DisableInput();
         Invoke(nameof(EnableInput), duration);
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Obstacle"))
+        {
+            DamagePlayer();
+            Destroy(other.gameObject);
+        }
     }
 }
