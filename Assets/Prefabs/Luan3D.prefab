@@ -83,6 +83,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 9117134734490032446}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afce7758975db9e4bab6c8a31dbaf0ff,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8072146486022884222}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afce7758975db9e4bab6c8a31dbaf0ff,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8842267713327164793}
   m_SourcePrefab: {fileID: 100100000, guid: afce7758975db9e4bab6c8a31dbaf0ff, type: 3}
 --- !u!1 &6382280520658541037 stripped
 GameObject:
@@ -203,5 +211,43 @@ MonoBehaviour:
   speed: 7
   jumpForce: 5
   gravity: 10
+  allowMovement: 1
+  maxHealth: 3
+  currentHealth: 0
+  dead: 0
+  invincibilityDuration: 1.5
+  isInvincible: 0
+--- !u!114 &8072146486022884222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6382280520658541037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e4166ecb272eea469a907eb18363c7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraController
+  virtualCamera: {fileID: 0}
+  deathCamera: {fileID: 0}
+  mainCamera: {fileID: 0}
+--- !u!114 &8842267713327164793
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6382280520658541037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fb9b757341f9de46a4a02c2e4a2d9b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LaneController
   laneWidth: 1.5
-  laneChangeSpeed: 5
+  laneChangeSpeed: 10
+  lanePositionsX:
+  - -8.1
+  - -6.6
+  - -5.1
+  currentLane: 0

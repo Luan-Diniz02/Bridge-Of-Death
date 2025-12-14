@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using UnityEngine.Playables;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
@@ -156,11 +157,11 @@ public class PlayerController : MonoBehaviour
         if (animator != null) animator.SetTrigger("Slider");
     }
 
-    // ... (Restante do código de Dano e Corrotinas permanece igual) ...
     public void DamagePlayer()
     {
         if (isInvincible || dead) return;
         currentHealth--;
+        PlayerStats.Instance.TakeDamage(1); 
         
         if (currentHealth <= 0)
         {
