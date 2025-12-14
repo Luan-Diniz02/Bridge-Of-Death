@@ -336,6 +336,7 @@ SkinnedMeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   serializedVersion: 2
   m_Quality: 0
   m_UpdateWhenOffscreen: 0
@@ -1246,7 +1247,9 @@ GameObject:
   - component: {fileID: 617759253295929057}
   - component: {fileID: 1000369990509834403}
   - component: {fileID: 6126414975681019049}
-  - component: {fileID: 711501368736326281}
+  - component: {fileID: 3314928412730006316}
+  - component: {fileID: 2183372065701101998}
+  - component: {fileID: 3266194138101936637}
   m_Layer: 0
   m_Name: Zombie3
   m_TagString: Untagged
@@ -1306,9 +1309,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   player: {fileID: 0}
-  speedEnemy: 2
-  attackRange: 2
---- !u!136 &711501368736326281
+  speedEnemy: 5
+  detectionRange: 5
+  timeToDestroy: 5
+  jumpForce: 8
+  gravity: 18
+  minLaneChangeInterval: 2
+  maxLaneChangeInterval: 5
+--- !u!114 &3314928412730006316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5146330075347840502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fb9b757341f9de46a4a02c2e4a2d9b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LaneController
+  laneWidth: 1.5
+  laneChangeSpeed: 10
+  lanePositionsX:
+  - -5.1
+  - -6.6
+  - -8.1
+  currentLane: 0
+--- !u!136 &2183372065701101998
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1327,10 +1354,35 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.3
+  m_Radius: 0.2
   m_Height: 1.72
   m_Direction: 1
   m_Center: {x: 0, y: 0.74, z: 0.3}
+--- !u!143 &3266194138101936637
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5146330075347840502}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1.72
+  m_Radius: 0.2
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0.74, z: 0}
 --- !u!1 &5146546684082618308
 GameObject:
   m_ObjectHideFlags: 0
