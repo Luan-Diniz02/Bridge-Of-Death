@@ -85,7 +85,7 @@ public class LaneController : MonoBehaviour
         {
             currentLane = 1; // Faixa Direita
         }
-        Debug.Log("LaneController Awake - Current Lane: " + currentLane + " Object name: " + gameObject.name);
+        //Debug.Log("LaneController Awake - Current Lane: " + currentLane + " Object name: " + gameObject.name);
     }
 
     // Getters úteis para animações ou lógica externa
