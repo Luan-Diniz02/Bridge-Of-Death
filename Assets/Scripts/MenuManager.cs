@@ -1,21 +1,17 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class MenuManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private int targetFrameRate = 60;
+    private void Awake()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Application.targetFrameRate = targetFrameRate;
     }
 
     public void LoadScene(string sceneName)
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
     }
+
 }
