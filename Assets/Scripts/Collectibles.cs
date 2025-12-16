@@ -81,7 +81,7 @@ public class Collectibles : MonoBehaviour
             case CollectibleType.SpeedBoost:
                 // Aumenta velocidade temporariamente
                 Debug.Log("Speed Boost ativado!");
-                // player.ApplySpeedBoost(duration, effectValue);
+                player.ApplySpeedBoost(duration, effectValue);
                 break;
                 
             case CollectibleType.Shield:

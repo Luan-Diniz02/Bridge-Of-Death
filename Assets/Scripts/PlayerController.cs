@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
 using UnityEngine.Playables;
+using System;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
@@ -40,6 +41,14 @@ public class PlayerController : MonoBehaviour
     private Vector3 horizontalVelocity;
     private Vector3 verticalVelocityVector;
     private Vector3 targetPosition;
+    private float baseSpeed;
+    private float speedMultiplier = 1f; // Multiplicador para power-ups
+    private bool hasSpeedBoost = false;
+    
+    [Header("Incremento de Velocidade")]
+    [SerializeField] private float speedIncreaseAmount = 0.1f;
+    [SerializeField] private float speedIncreaseInterval = 1f;
+    private float nextSpeedIncreaseTime;
 
     void Awake()
     {
@@ -51,12 +60,14 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         currentHealth = maxHealth;
+        baseSpeed = speed;
+        nextSpeedIncreaseTime = Time.time + speedIncreaseInterval;
     }
 
     void Update()
     {
         HandleMovement();
-        StartCoroutine(increaseSpeedOverTime(0.1f, 1f));
+        UpdateSpeedIncrease();
     }
 
     private void HandleMovement()
@@ -69,7 +80,8 @@ public class PlayerController : MonoBehaviour
         Vector3 cameraForward = cameraController.GetCameraForwardDirection();
 
         // --- 1. MOVIMENTO PARA FRENTE ---
-        forwardVelocity = cameraForward * speed;
+        float finalSpeed = baseSpeed * speedMultiplier;
+        forwardVelocity = cameraForward * finalSpeed;
 
         // --- 2. MOVIMENTO HORIZONTAL (Via LaneController) ---
         // Perguntamos ao LaneController qual a velocidade horizontal necessária agora
@@ -229,4 +241,37 @@ public class PlayerController : MonoBehaviour
             Destroy(other.gameObject);
         }
     }
+
+    public void ApplySpeedBoost(float duration, float effectValue)
+    {
+        if (hasSpeedBoost)
+        {
+            StopCoroutine("SpeedBoostCoroutine");
+        }
+        StartCoroutine(SpeedBoostCoroutine(duration, effectValue));
+    }
+
+    private IEnumerator SpeedBoostCoroutine(float duration, float effectValue)
+    {
+        hasSpeedBoost = true;
+        speedMultiplier = effectValue;
+        
+        yield return new WaitForSeconds(duration);
+        
+        speedMultiplier = 1f;
+        hasSpeedBoost = false;
+    }
+    
+    private void UpdateSpeedIncrease()
+    {
+        if (dead || !allowMovement) return;
+        
+        if (Time.time >= nextSpeedIncreaseTime)
+        {
+            baseSpeed += speedIncreaseAmount;
+            nextSpeedIncreaseTime = Time.time + speedIncreaseInterval;
+        }
+    }
 }
+
+    
