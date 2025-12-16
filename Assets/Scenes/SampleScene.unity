@@ -152,9 +152,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawn
   objectPrefab:
-  - {fileID: 679864369103879499, guid: 7c857df6f3a0c364997001a2dc84dbcf, type: 3}
-  - {fileID: 8475833574052523601, guid: a1614f0cf649e3a4e894d20bda9008e7, type: 3}
-  - {fileID: 5310963310368244162, guid: 84b95e80250efd2408969492c3002afd, type: 3}
+  - {fileID: 3847986786072170750, guid: 8abcfa65ad0eaa141ba803366892c799, type: 3}
+  - {fileID: 5287012754143224854, guid: f9e7ff49e17f5784b84be1dc88357f6d, type: 3}
+  - {fileID: 6127292832171620352, guid: 3879e6d5c38289b47ad564a55e39a9b6, type: 3}
   yPosition: 19
   xPosition:
   - -5.1
@@ -210,7 +210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawn
   objectPrefab:
-  - {fileID: 3664100224609117633, guid: a73eca55382651c449497eca9a2be0be, type: 3}
+  - {fileID: 8883386414833966314, guid: b4931b8a247b87f4d88c476756db8bc2, type: 3}
   yPosition: 19
   xPosition:
   - -5.1
