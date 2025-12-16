@@ -48,7 +48,6 @@ public class Collectibles : MonoBehaviour
         switch (collectibleType)
         {
             case CollectibleType.Coin:
-                // Adiciona moeda (você pode criar um CoinManager depois)
                 Debug.Log("Coletou 1 moeda!");
                 break;
                 
