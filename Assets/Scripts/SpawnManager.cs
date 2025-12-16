@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpawnManager : MonoBehaviour
 {
-    [SerializeField] private GameObject objectPrefab;
+    [SerializeField] private GameObject [] objectPrefab;
     [SerializeField] private float yPosition;
     [SerializeField] private float[] xPosition, zPosition;
     [SerializeField] private int totalObjects = 10;
@@ -30,7 +30,7 @@ public class SpawnManager : MonoBehaviour
         float spawnZ = Random.Range(zPosition[0], zPosition[1]);
         float spawnX = xPosition[Random.Range(0, xPosition.Length)];
         Vector3 spawnPosition = new(spawnX, yPosition, spawnZ);
-        Instantiate(objectPrefab, spawnPosition, Quaternion.identity);
+        Instantiate(objectPrefab[Random.Range(0, objectPrefab.Length)], spawnPosition, Quaternion.identity);
     }
 
     private void SpawnObject()
@@ -38,7 +38,7 @@ public class SpawnManager : MonoBehaviour
         float spawnZ = zPosition[0];
         float spawnX = xPosition[Random.Range(0, xPosition.Length)];
         Vector3 spawnPosition = new(spawnX, yPosition, spawnZ);
-        Instantiate(objectPrefab, spawnPosition, Quaternion.identity);
+        Instantiate(objectPrefab[Random.Range(0, objectPrefab.Length)], spawnPosition, Quaternion.identity);
     }
 
     private IEnumerator SpawnRoutine()
