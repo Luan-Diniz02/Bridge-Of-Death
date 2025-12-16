@@ -89,13 +89,13 @@ public class PlayerController : MonoBehaviour
         if (!allowMovement || dead)
         {
             animator.SetFloat("Speed", 0);
-            //if(audioSource != null && audioSource.isPlaying) audioSource.Stop();
+            if(audioSource != null && audioSource.isPlaying) audioSource.Stop();
             return false;
         }
         else
         {
             animator.SetFloat("Speed", 1);
-            //if(audioSource != null && !audioSource.isPlaying) audioSource.Play();
+            if(audioSource != null && !audioSource.isPlaying) audioSource.Play();
         }
         return true;
     }
@@ -180,6 +180,14 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Hit");
         }
         StartCoroutine(InvincibilityCoroutine());
+    }
+
+    public void HealPlayer(int amount)
+    {
+        if (dead) return;
+        currentHealth += amount;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        PlayerStats.Instance.Heal(amount); 
     }
 
     private IEnumerator InvincibilityCoroutine()
