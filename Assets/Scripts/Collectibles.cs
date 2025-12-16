@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
+[RequireComponent(typeof(AudioSource))]
 public class Collectibles : MonoBehaviour
 {
     public enum CollectibleType
@@ -23,9 +24,17 @@ public class Collectibles : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject uiElement;
     [SerializeField] private TextMeshProUGUI infoText;
+    [Header("Sons")]
+    [SerializeField] private AudioClip collectSound;
+    private AudioSource audioSource;
     
     [Header("Events")]
     [SerializeField] private UnityEvent onCollect;
+
+    void Awake()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     void OnTriggerEnter(Collider other)
     {
@@ -49,6 +58,7 @@ public class Collectibles : MonoBehaviour
         {
             case CollectibleType.Coin:
                 Debug.Log("Coletou 1 moeda!");
+                if(audioSource != null && collectSound != null) audioSource.PlayOneShot(collectSound);
                 break;
                 
             case CollectibleType.SpeedBoost:
