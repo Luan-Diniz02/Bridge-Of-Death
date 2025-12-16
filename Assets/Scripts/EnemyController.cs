@@ -98,7 +98,14 @@ public class EnemyController : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            TriggerEnemyAttack();
+            if(playerController != null && !playerController.getIsShield())
+            {
+                TriggerEnemyAttack();
+            }
+            else
+            {
+                Dead();
+            }
         }
         else if (other.CompareTag("Obstacle"))
         {
@@ -114,6 +121,19 @@ public class EnemyController : MonoBehaviour
         enemyAnimator.SetTrigger("Attack");
         playerController.DamagePlayer();
         enemyCollider.enabled = false;
+    }
+
+    private void Dead()
+    {
+        Debug.Log("Enemy killed by shield!");
+        enemyAnimator.SetBool("Dead", true);
+        enemyCollider.enabled = false;
+        
+        // Para o movimento do inimigo
+        speedEnemy = 0f;
+        
+        // Destroi após a animação de morte (ajuste o tempo conforme sua animação)
+        Destroy(gameObject, 2f);
     }
     
     private void UpdateGravityAndJump()

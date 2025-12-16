@@ -79,21 +79,17 @@ public class Collectibles : MonoBehaviour
                 break;
                 
             case CollectibleType.SpeedBoost:
-                // Aumenta velocidade temporariamente
                 Debug.Log("Speed Boost ativado!");
                 player.ApplySpeedBoost(duration, effectValue);
                 break;
                 
             case CollectibleType.Shield:
-                // Protege de 1 hit
                 Debug.Log("Shield ativado!");
-                // player.ApplyShield(duration);
+                player.ApplyShield(duration);
                 break;
                 
             case CollectibleType.Heal:
-                // Atrai moedas automaticamente
                 Debug.Log("Heal ativado!");
-                // player.ApplyHeal(duration);
                 break;
         }
     }

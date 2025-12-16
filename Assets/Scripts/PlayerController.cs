@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool dead = false;
     [SerializeField] private float invincibilityDuration = 1.5f;
     [SerializeField] private bool isInvincible = false;
+    private bool shieldActive = false;
 
     // --- ESTADO INTERNO DO JOGADOR ---
     private float verticalVelocity;
@@ -176,7 +177,7 @@ public class PlayerController : MonoBehaviour
 
     public void DamagePlayer()
     {
-        if (isInvincible || dead) return;
+        if (isInvincible || dead || shieldActive) return; // Shield bloqueia dano
         currentHealth--;
         PlayerStats.Instance.TakeDamage(1); 
         
@@ -272,6 +273,33 @@ public class PlayerController : MonoBehaviour
             nextSpeedIncreaseTime = Time.time + speedIncreaseInterval;
         }
     }
+
+    public void ApplyShield(float duration)
+    {
+        // Se já tem shield ativo, reinicia o timer
+        if (shieldActive)
+        {
+            StopCoroutine("ShieldCoroutine");
+        }
+        StartCoroutine(ShieldCoroutine(duration));
+    }
+
+    private IEnumerator ShieldCoroutine(float duration)
+    {
+        shieldActive = true;
+        Debug.Log("Shield ativado!");
+        
+        yield return new WaitForSeconds(duration);
+        
+        shieldActive = false;
+        Debug.Log("Shield desativado!");
+    }
+
+    public bool getIsShield()
+    {
+        return shieldActive;
+    }
+
 }
 
     
