@@ -7,7 +7,8 @@ using UnityEngine.Playables;
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerInput))]
 [RequireComponent(typeof(CameraController))]
-[RequireComponent(typeof(LaneController))] // Adicionado dependência
+[RequireComponent(typeof(LaneController))] 
+[RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour
 {
     // --- COMPONENTES E REFERÊNCIAS ---
@@ -15,7 +16,8 @@ public class PlayerController : MonoBehaviour
     private PlayerInput playerInput;
     private Animator animator;
     private CameraController cameraController;
-    private LaneController laneController; // Nova referência
+    private LaneController laneController; 
+    private AudioSource audioSource;
 
     [Header("Configurações de Movimento")]
     [SerializeField] private float speed = 5f;
@@ -45,7 +47,8 @@ public class PlayerController : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
         cameraController = GetComponent<CameraController>();
-        laneController = GetComponent<LaneController>(); // Pega o componente
+        laneController = GetComponent<LaneController>(); 
+        audioSource = GetComponent<AudioSource>();
 
         currentHealth = maxHealth;
     }
@@ -86,11 +89,13 @@ public class PlayerController : MonoBehaviour
         if (!allowMovement || dead)
         {
             animator.SetFloat("Speed", 0);
+            //if(audioSource != null && audioSource.isPlaying) audioSource.Stop();
             return false;
         }
         else
         {
             animator.SetFloat("Speed", 1);
+            //if(audioSource != null && !audioSource.isPlaying) audioSource.Play();
         }
         return true;
     }

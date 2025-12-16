@@ -41,24 +41,41 @@ public class Collectibles : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerController player = other.GetComponent<PlayerController>();
-            
+
             if (player != null)
             {
                 ApplyEffect(player);
             }
-            
+
+            // Toca o som
+            if (audioSource != null && collectSound != null)
+            {
+                audioSource.PlayOneShot(collectSound);
+            }
+
             onCollect.Invoke();
-            Destroy(gameObject);
+
+            HideAndDestroyAfterSound();
         }
     }
-    
+
+    private void HideAndDestroyAfterSound()
+    {
+        // Desativa visual mas mantém objeto ativo para o som terminar
+        GetComponent<Renderer>().enabled = false;
+        GetComponent<Collider>().enabled = false;
+
+        // Destroi após o som terminar
+        float soundLength = collectSound != null ? collectSound.length : 0f;
+        Destroy(gameObject, soundLength);
+    }
+
     private void ApplyEffect(PlayerController player)
     {
         switch (collectibleType)
         {
             case CollectibleType.Coin:
                 Debug.Log("Coletou 1 moeda!");
-                if(audioSource != null && collectSound != null) audioSource.PlayOneShot(collectSound);
                 break;
                 
             case CollectibleType.SpeedBoost:

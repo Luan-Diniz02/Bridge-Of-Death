@@ -325,7 +325,7 @@ PrefabInstance:
     - target: {fileID: 3619198076101792518, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8260498309514615797, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
@@ -335,7 +335,7 @@ PrefabInstance:
     - target: {fileID: 8421661978075706956, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
       propertyPath: m_Volume
-      value: 0.2
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8421661978075706956, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
@@ -1978,7 +1978,7 @@ PrefabInstance:
     - target: {fileID: 3619198076101792518, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8260498309514615797, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
@@ -1988,7 +1988,7 @@ PrefabInstance:
     - target: {fileID: 8421661978075706956, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
       propertyPath: m_Volume
-      value: 0.2
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8421661978075706956, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
@@ -2983,7 +2983,7 @@ PrefabInstance:
     - target: {fileID: 3619198076101792518, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8260498309514615797, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
@@ -2993,7 +2993,7 @@ PrefabInstance:
     - target: {fileID: 8421661978075706956, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
       propertyPath: m_Volume
-      value: 0.2
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8421661978075706956, guid: 32cd7708d0b1700489c1f9264f130166,
         type: 3}
@@ -3712,7 +3712,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -4288,6 +4288,26 @@ PrefabInstance:
     - target: {fileID: 7742447143339801441, guid: 01164be779472854e891078a30269323,
         type: 3}
       propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7845013644899349236, guid: 01164be779472854e891078a30269323,
+        type: 3}
+      propertyPath: Loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7845013644899349236, guid: 01164be779472854e891078a30269323,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7845013644899349236, guid: 01164be779472854e891078a30269323,
+        type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 8300000, guid: 7c518e8469a403b4c981664ecb28a79a, type: 3}
+    - target: {fileID: 7845013644899349236, guid: 01164be779472854e891078a30269323,
+        type: 3}
+      propertyPath: m_PlayOnAwake
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7873693529062115725, guid: 01164be779472854e891078a30269323,
