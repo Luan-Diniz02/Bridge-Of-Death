@@ -49,4 +49,10 @@ public class SpawnManager : MonoBehaviour
             yield return new WaitForSeconds(2f);
         }
     }
+
+    public void StopSpawning()
+    {
+        SpawnRoutineEnabled = false;
+        StopAllCoroutines();
+    }
 }
