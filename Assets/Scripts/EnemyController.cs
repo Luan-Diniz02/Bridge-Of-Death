@@ -137,14 +137,25 @@ public class EnemyController : MonoBehaviour
         audioSource.PlayOneShot(deathSound);
         enemyAnimator.SetBool("Dead", true);
         enemyCollider.enabled = false;
-        
+
         // Para o movimento do inimigo
         speedEnemy = 0f;
-        
+
+        ApplyKnockback();
+
         // Destroi após a animação de morte (ajuste o tempo conforme sua animação)
         Destroy(gameObject, 2f);
     }
-    
+
+    private void ApplyKnockback()
+    {
+        // Aplica impulso para trás
+        Vector3 knockbackDirection = -transform.forward;
+        float knockbackForce = 50f;
+        verticalVelocity = jumpForce * 0.5f; // Adiciona um pequeno impulso vertical
+        horizontalVelocity = knockbackDirection * knockbackForce;
+    }
+
     private void UpdateGravityAndJump()
     {
         if (characterController.isGrounded)
