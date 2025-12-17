@@ -46,6 +46,11 @@ public class BarManager : MonoBehaviour
         if (useSegments && barSegments != null)
         {
             activeSegments = barSegments.Length;
+            // Força ativação de todos os segmentos imediatamente
+            foreach (var segment in barSegments)
+            {
+                if (segment != null) segment.SetActive(true);
+            }
         }
         
         ShowBar();
@@ -78,6 +83,18 @@ public class BarManager : MonoBehaviour
 
             // Reseta o tempo restante para o (possivelmente novo) máximo
             remainingTime = maxDuration;
+            
+            // Reseta a contagem de segmentos ativos
+            if (useSegments && barSegments != null)
+            {
+                activeSegments = barSegments.Length;
+                // Força re-ativação de todos os segmentos
+                foreach (var segment in barSegments)
+                {
+                    if (segment != null) segment.SetActive(true);
+                }
+            }
+            
             UpdateBar();
         }
         else
