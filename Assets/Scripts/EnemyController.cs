@@ -3,6 +3,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(LaneController))]
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(AudioSource))]
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private GameObject player;
@@ -17,6 +18,11 @@ public class EnemyController : MonoBehaviour
     [Header("Configurações de Mudança de Faixa")]
     [SerializeField] private float minLaneChangeInterval = 2f;
     [SerializeField] private float maxLaneChangeInterval = 5f;
+
+    [Header("Sons")]
+    [SerializeField] private AudioClip attackSound;
+    [SerializeField] private AudioClip deathSound;
+    private AudioSource audioSource;
     
     private Transform playerTransform;
     private Transform enemyTransform;
@@ -40,6 +46,7 @@ public class EnemyController : MonoBehaviour
         enemyCollider = GetComponent<Collider>();
         laneController = GetComponent<LaneController>();
         characterController = GetComponent<CharacterController>();
+        audioSource = GetComponent<AudioSource>();
         
         // Ignora colisão física entre CharacterControllers, mas mantém triggers funcionando
         CharacterController playerCharController = player.GetComponent<CharacterController>();
@@ -117,6 +124,7 @@ public class EnemyController : MonoBehaviour
     private void TriggerEnemyAttack()
     {
         Debug.Log("Enemy collided with Player!");   
+        audioSource.PlayOneShot(attackSound);
         enemyAnimator.SetFloat("Speed", 0f);         
         enemyAnimator.SetTrigger("Attack");
         playerController.DamagePlayer();
@@ -126,6 +134,7 @@ public class EnemyController : MonoBehaviour
     private void Dead()
     {
         Debug.Log("Enemy killed by shield!");
+        audioSource.PlayOneShot(deathSound);
         enemyAnimator.SetBool("Dead", true);
         enemyCollider.enabled = false;
         
