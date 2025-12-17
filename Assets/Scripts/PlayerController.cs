@@ -12,7 +12,6 @@ using System;
 [RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour
 {
-    // --- COMPONENTES E REFERÊNCIAS ---
     private CharacterController characterController;
     private PlayerInput playerInput;
     private Animator animator;
@@ -26,8 +25,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float gravity = 18f;
     [SerializeField] private bool allowMovement = true;
 
-    // (Removido Header Configurações de Faixa - agora está no LaneController)
-
     [Header("Configurações de vida")]
     [SerializeField] private int maxHealth = 3;
     [SerializeField] private int currentHealth;
@@ -36,14 +33,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool isInvincible = false;
     private bool shieldActive = false;
 
-    // --- ESTADO INTERNO DO JOGADOR ---
     private float verticalVelocity;
     private Vector3 forwardVelocity;
     private Vector3 horizontalVelocity;
     private Vector3 verticalVelocityVector;
     private Vector3 targetPosition;
     private float baseSpeed;
-    private float speedMultiplier = 1f; // Multiplicador para power-ups
+    private float speedMultiplier = 1f; 
     private bool hasSpeedBoost = false;
     
     [Header("Incremento de Velocidade")]
@@ -75,24 +71,24 @@ public class PlayerController : MonoBehaviour
     {
         if (characterController == null || cameraController == null) return;
 
+        // Verifica se o movimento é permitido
         bool flowControl = CheckMovementAllowed();
-        if (!flowControl) return; // Se não pode mover, interrompe aqui ou ajusta lógica
+        if (!flowControl) return; 
 
         Vector3 cameraForward = cameraController.GetCameraForwardDirection();
 
-        // --- 1. MOVIMENTO PARA FRENTE ---
+        // Calcula a velocidade para frente
         float finalSpeed = baseSpeed * speedMultiplier;
         forwardVelocity = cameraForward * finalSpeed;
 
-        // --- 2. MOVIMENTO HORIZONTAL (Via LaneController) ---
-        // Perguntamos ao LaneController qual a velocidade horizontal necessária agora
+       // Calcula a velocidade horizontal (troca de faixa)
         horizontalVelocity = laneController.CalculateLaneMovement(transform.position);
 
-        // --- 3. GRAVIDADE E PULO ---
+        // Atualiza gravidade e pulo
         UpdateGravityAndJump();
         verticalVelocityVector = Vector3.up * verticalVelocity;
 
-        // --- 4. COMBINA TODOS OS MOVIMENTOS ---
+        // Move o personagem
         targetPosition = forwardVelocity + horizontalVelocity + verticalVelocityVector;
         characterController.Move(targetPosition * Time.deltaTime);
     }
@@ -177,7 +173,7 @@ public class PlayerController : MonoBehaviour
 
     public void DamagePlayer()
     {
-        if (isInvincible || dead || shieldActive) return; // Shield bloqueia dano
+        if (isInvincible || dead || shieldActive) return;
         currentHealth--;
         PlayerStats.Instance.TakeDamage(1); 
         
@@ -232,16 +228,6 @@ public class PlayerController : MonoBehaviour
     public void EnableInput() {
         if (playerInput != null) playerInput.ActivateInput();
     }
-    
-    /* // Trigger Enter permanece igual
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Obstacle"))
-        {
-            DamagePlayer();
-            Destroy(other.gameObject);
-        }
-    } */
 
     public void ApplySpeedBoost(float duration, float effectValue)
     {
@@ -276,7 +262,6 @@ public class PlayerController : MonoBehaviour
 
     public void ApplyShield(float duration)
     {
-        // Se já tem shield ativo, reinicia o timer
         if (shieldActive)
         {
             StopCoroutine("ShieldCoroutine");

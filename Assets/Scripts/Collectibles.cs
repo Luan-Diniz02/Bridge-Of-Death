@@ -19,7 +19,7 @@ public class Collectibles : MonoBehaviour
     
     [Header("Power-Up Settings (se aplicável)")]
     [SerializeField] private float duration = 5f;
-    [SerializeField] private float effectValue = 2f; // Multiplicador de velocidade, etc
+    [SerializeField] private float effectValue = 2f;
     
     [Header("UI")]
     [SerializeField] private GameObject uiElement;
@@ -47,7 +47,6 @@ public class Collectibles : MonoBehaviour
                 ApplyEffect(player);
             }
 
-            // Toca o som
             if (audioSource != null && collectSound != null)
             {
                 audioSource.PlayOneShot(collectSound);

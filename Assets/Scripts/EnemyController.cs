@@ -25,8 +25,8 @@ public class EnemyController : MonoBehaviour
     private AudioSource audioSource;
 
     [Header("Knockback Settings")]
-    [SerializeField] private float knockbackForce = 20f; // Reduzi um pouco o padrão, pois 50 pode ser muito rápido sem atrito
-    [SerializeField] private float knockbackDrag = 2f;   // Atrito para o inimigo desacelerar após o empurrão
+    [SerializeField] private float knockbackForce = 10f; 
+    [SerializeField] private float knockbackDrag = 2f;   
     
     private Transform playerTransform;
     private Transform enemyTransform;
@@ -41,7 +41,6 @@ public class EnemyController : MonoBehaviour
     private float verticalVelocity;
     private float nextLaneChangeTime;
     
-    // Flag para controlar estado de morte
     private bool isDead = false;
 
     void Awake()
@@ -66,7 +65,6 @@ public class EnemyController : MonoBehaviour
 
     void Update()
     {
-        // Se estiver morto, apenas processa a física do knockback/gravidade
         if (isDead)
         {
             HandleDeadMovement();
@@ -106,7 +104,7 @@ public class EnemyController : MonoBehaviour
         Vector3 direction = Vector3.forward;
         Vector3 forwardMovement = direction * speedEnemy;
         
-        // Calcula o movimento horizontal normal (Isso estava sobrescrevendo seu knockback antes)
+        // Calcula o movimento horizontal normal 
         horizontalVelocity = laneController.CalculateLaneMovement(enemyTransform.position);
         
         UpdateGravityAndJump();
@@ -154,22 +152,20 @@ public class EnemyController : MonoBehaviour
         playerController.DamagePlayer();
         enemyCollider.enabled = false;
         
-        // Opcional: Impedir movimento após atacar também
         speedEnemy = 0f;
     }
 
     private void Dead()
     {
-        if (isDead) return; // Evita chamar Dead() múltiplas vezes
+        if (isDead) return; 
 
-        isDead = true; // Ativa a flag
+        isDead = true; 
         Debug.Log("Enemy killed by shield!");
         
         speedEnemy = 0f;
         enemyAnimator.SetBool("Dead", true);
         audioSource.PlayOneShot(deathSound);
         
-        // Desativa o colisor para não bater mais em nada
         if (enemyCollider != null) enemyCollider.enabled = false;
         
         ApplyKnockback();
@@ -179,8 +175,7 @@ public class EnemyController : MonoBehaviour
 
     private void ApplyKnockback()
     {
-        // Vector3.back empurra para trás no eixo Z global (oposto ao player correndo para frente)
-        // Se quiser que seja relativo à rotação do inimigo, use -transform.forward
+        // Calcula a direção do knockback (para trás em relação ao inimigo)
         Vector3 knockbackDirection = -transform.forward; 
         
         verticalVelocity = jumpForce * 0.5f; // Pulo leve

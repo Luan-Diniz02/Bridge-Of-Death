@@ -7,7 +7,6 @@ public class LaneController : MonoBehaviour
     [SerializeField] private float laneChangeSpeed = 10f;
     [SerializeField] private float [] lanePositionsX = new float[] { -8.1f, -6.6f, -5.1f }; // Posições X para faixas esquerda, centro e direita
     
-    // Estado
     [SerializeField] private int currentLane; // -1: Esquerda, 0: Centro, 1: Direita
     private float centerLaneX; // A posição X original (centro)
     private bool isChangingLane = false;
@@ -15,7 +14,6 @@ public class LaneController : MonoBehaviour
 
     void Awake()
     {
-        // Define o ponto central baseado na posição inicial do objeto
         centerLaneX = -6.6f; // Centralizado na faixa do meio
         CurrentLaneOnSpawn();
         
@@ -35,20 +33,16 @@ public class LaneController : MonoBehaviour
     // Verifica a distância absoluta
     float distance = Mathf.Abs(currentPosition.x - targetX);
 
-    // Condição de parada (Threshold)
+    // Condição de parada 
     if (distance < 0.1f)
     {
         horizontalVelocity = Vector3.zero;
         isChangingLane = false;
-        
-        // Opcional: Snap para posição exata para evitar micro-deslizes
-        // Mas sem alterar transform diretamente aqui
+  
         return Vector3.zero; 
     }
 
-    // --- CORREÇÃO AQUI ---
-    // Voltamos a usar a lógica proporcional: (Destino - Posição Atual) * Velocidade
-    // Isso restaura o efeito de suavização do script original.
+    // Calcula a velocidade necessária para mover em direção à faixa
     float moveX = (targetX - currentPosition.x) * laneChangeSpeed;
     
     horizontalVelocity = Vector3.right * moveX;
@@ -85,7 +79,6 @@ public class LaneController : MonoBehaviour
         {
             currentLane = 1; // Faixa Direita
         }
-        //Debug.Log("LaneController Awake - Current Lane: " + currentLane + " Object name: " + gameObject.name);
     }
 
     // Getters úteis para animações ou lógica externa
