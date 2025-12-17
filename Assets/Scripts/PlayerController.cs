@@ -233,7 +233,7 @@ public class PlayerController : MonoBehaviour
         if (playerInput != null) playerInput.ActivateInput();
     }
     
-    // Trigger Enter permanece igual
+    /* // Trigger Enter permanece igual
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Obstacle"))
@@ -241,7 +241,7 @@ public class PlayerController : MonoBehaviour
             DamagePlayer();
             Destroy(other.gameObject);
         }
-    }
+    } */
 
     public void ApplySpeedBoost(float duration, float effectValue)
     {

@@ -23,6 +23,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private AudioClip attackSound;
     [SerializeField] private AudioClip deathSound;
     private AudioSource audioSource;
+
+    [Header("Knockback Settings")]
+    [SerializeField] private float knockbackForce = 20f; // Reduzi um pouco o padrão, pois 50 pode ser muito rápido sem atrito
+    [SerializeField] private float knockbackDrag = 2f;   // Atrito para o inimigo desacelerar após o empurrão
     
     private Transform playerTransform;
     private Transform enemyTransform;
@@ -36,6 +40,9 @@ public class EnemyController : MonoBehaviour
     private Vector3 horizontalVelocity;
     private float verticalVelocity;
     private float nextLaneChangeTime;
+    
+    // Flag para controlar estado de morte
+    private bool isDead = false;
 
     void Awake()
     {
@@ -48,20 +55,24 @@ public class EnemyController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
         
-        // Ignora colisão física entre CharacterControllers, mas mantém triggers funcionando
         CharacterController playerCharController = player.GetComponent<CharacterController>();
         if (playerCharController != null)
         {
             Physics.IgnoreCollision(characterController, playerCharController, true);
         }
         
-        // Define o primeiro momento de mudança de faixa
         ScheduleNextLaneChange();
     }
 
-    // Update is called once per frame
     void Update()
     {
+        // Se estiver morto, apenas processa a física do knockback/gravidade
+        if (isDead)
+        {
+            HandleDeadMovement();
+            return;
+        }
+
         if (!hasNearbyPlayer) CheckPlayerProximity();
         CheckRandomLaneChange();
         MoveTowardsPlayer();
@@ -77,19 +88,30 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    // Lógica separada para quando o inimigo está morto (Knockback + Gravidade)
+    private void HandleDeadMovement()
+    {
+        UpdateGravityAndJump();
+        Vector3 verticalMovement = Vector3.up * verticalVelocity;
+
+        // Aplica um "drag" (atrito) para ele não deslizar para sempre
+        horizontalVelocity = Vector3.Lerp(horizontalVelocity, Vector3.zero, Time.deltaTime * knockbackDrag);
+
+        Vector3 totalMovement = horizontalVelocity + verticalMovement;
+        characterController.Move(totalMovement * Time.deltaTime);
+    }
+
     private void MoveTowardsPlayer()
     {
         Vector3 direction = Vector3.forward;
         Vector3 forwardMovement = direction * speedEnemy;
         
-        // Calcula o movimento horizontal para mudança de faixa
+        // Calcula o movimento horizontal normal (Isso estava sobrescrevendo seu knockback antes)
         horizontalVelocity = laneController.CalculateLaneMovement(enemyTransform.position);
         
-        // Aplica gravidade e pulo
         UpdateGravityAndJump();
         Vector3 verticalMovement = Vector3.up * verticalVelocity;
         
-        // Combina todos os movimentos e usa CharacterController
         Vector3 totalMovement = forwardMovement + horizontalVelocity + verticalMovement;
         characterController.Move(totalMovement * Time.deltaTime);
         
@@ -103,6 +125,9 @@ public class EnemyController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        // Se já estiver morto, ignora colisões
+        if (isDead) return;
+
         if (other.CompareTag("Player"))
         {
             if(playerController != null && !playerController.getIsShield())
@@ -116,7 +141,6 @@ public class EnemyController : MonoBehaviour
         }
         else if (other.CompareTag("Obstacle"))
         {
-            // Pula por cima do obstáculo
             Jump();
         }
     }
@@ -129,31 +153,38 @@ public class EnemyController : MonoBehaviour
         enemyAnimator.SetTrigger("Attack");
         playerController.DamagePlayer();
         enemyCollider.enabled = false;
+        
+        // Opcional: Impedir movimento após atacar também
+        speedEnemy = 0f;
     }
 
     private void Dead()
     {
+        if (isDead) return; // Evita chamar Dead() múltiplas vezes
+
+        isDead = true; // Ativa a flag
         Debug.Log("Enemy killed by shield!");
-        audioSource.PlayOneShot(deathSound);
-        enemyAnimator.SetBool("Dead", true);
-        enemyCollider.enabled = false;
-
-        // Para o movimento do inimigo
+        
         speedEnemy = 0f;
-
+        enemyAnimator.SetBool("Dead", true);
+        audioSource.PlayOneShot(deathSound);
+        
+        // Desativa o colisor para não bater mais em nada
+        if (enemyCollider != null) enemyCollider.enabled = false;
+        
         ApplyKnockback();
-
-        // Destroi após a animação de morte (ajuste o tempo conforme sua animação)
+        
         Destroy(gameObject, 2f);
     }
 
     private void ApplyKnockback()
     {
-        // Aplica impulso para trás
-        Vector3 knockbackDirection = -transform.forward;
-        float knockbackForce = 50f;
-        verticalVelocity = jumpForce * 0.5f; // Adiciona um pequeno impulso vertical
-        horizontalVelocity = knockbackDirection * knockbackForce;
+        // Vector3.back empurra para trás no eixo Z global (oposto ao player correndo para frente)
+        // Se quiser que seja relativo à rotação do inimigo, use -transform.forward
+        Vector3 knockbackDirection = -transform.forward; 
+        
+        verticalVelocity = jumpForce * 0.5f; // Pulo leve
+        horizontalVelocity = knockbackDirection * knockbackForce; // Define a velocidade inicial do knockback
     }
 
     private void UpdateGravityAndJump()
@@ -190,17 +221,17 @@ public class EnemyController : MonoBehaviour
         int currentLane = laneController.CurrentLane;
         int laneChangeDirection;
         
-        if (currentLane == -1) // Faixa esquerda
+        if (currentLane == -1)
         {
-            laneChangeDirection = 1; // Vai para o meio
+            laneChangeDirection = 1;
         }
-        else if (currentLane == 1) // Faixa direita
+        else if (currentLane == 1)
         {
-            laneChangeDirection = -1; // Vai para o meio
+            laneChangeDirection = -1;
         }
-        else // Faixa do meio
+        else
         {
-            laneChangeDirection = Random.value < 0.5f ? -1 : 1; // Escolhe aleatoriamente
+            laneChangeDirection = Random.value < 0.5f ? -1 : 1;
         }
         
         laneController.MoveLane(laneChangeDirection);
