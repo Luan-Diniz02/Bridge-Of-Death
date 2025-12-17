@@ -18,6 +18,10 @@ public class PlayerController : MonoBehaviour
     private CameraController cameraController;
     private LaneController laneController; 
     private AudioSource audioSource;
+    
+    [Header("UI Power-Ups")]
+    [SerializeField] private BarManager speedBoostBar;
+    [SerializeField] private BarManager shieldBar;
 
     [Header("Configurações de Movimento")]
     [SerializeField] private float speed = 5f;
@@ -47,6 +51,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speedIncreaseInterval = 1f;
     private float nextSpeedIncreaseTime;
 
+    // Variáveis para controlar as Corrotinas ativas
+    private Coroutine speedBoostCoroutine;
+    private Coroutine shieldCoroutine;
+
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
@@ -71,24 +79,19 @@ public class PlayerController : MonoBehaviour
     {
         if (characterController == null || cameraController == null) return;
 
-        // Verifica se o movimento é permitido
         bool flowControl = CheckMovementAllowed();
         if (!flowControl) return; 
 
         Vector3 cameraForward = cameraController.GetCameraForwardDirection();
 
-        // Calcula a velocidade para frente
         float finalSpeed = baseSpeed * speedMultiplier;
         forwardVelocity = cameraForward * finalSpeed;
 
-       // Calcula a velocidade horizontal (troca de faixa)
         horizontalVelocity = laneController.CalculateLaneMovement(transform.position);
 
-        // Atualiza gravidade e pulo
         UpdateGravityAndJump();
         verticalVelocityVector = Vector3.up * verticalVelocity;
 
-        // Move o personagem
         targetPosition = forwardVelocity + horizontalVelocity + verticalVelocityVector;
         characterController.Move(targetPosition * Time.deltaTime);
     }
@@ -127,33 +130,20 @@ public class PlayerController : MonoBehaviour
 
         Vector2 input = context.ReadValue<Vector2>();
 
-        // Input Vertical (Pulo / Deslize)
         if (input.y > 0f) Jump();
         else if (input.y < 0f) Slider();
 
-        // Input Horizontal (Troca de Faixa)
         if (Mathf.Abs(input.x) > 0f && !laneController.IsChangingLane)
         {
             Vector3 cameraRight = cameraController.GetCameraRightDirection();
             
-            // Lógica de direção baseada na câmera permanece aqui, pois é input do jogador
             float dotProduct = Vector3.Dot(cameraRight, Vector3.right);
             int direction = 0;
 
-            if (input.x < 0)
-            {
-                direction = (dotProduct > 0) ? -1 : 1;
-            }
-            else if (input.x > 0)
-            {
-                direction = (dotProduct > 0) ? 1 : -1;
-            }
+            if (input.x < 0) direction = (dotProduct > 0) ? -1 : 1;
+            else if (input.x > 0) direction = (dotProduct > 0) ? 1 : -1;
 
-            // Manda o comando final para o LaneController
-            if (direction != 0)
-            {
-                laneController.MoveLane(direction);
-            }
+            if (direction != 0) laneController.MoveLane(direction);
         }
     }
 
@@ -229,13 +219,28 @@ public class PlayerController : MonoBehaviour
         if (playerInput != null) playerInput.ActivateInput();
     }
 
+    // --- LÓGICA DE SPEED BOOST CORRIGIDA ---
     public void ApplySpeedBoost(float duration, float effectValue)
     {
+        // Se já existe uma corrotina rodando, para ela IMEDIATAMENTE
+        if (speedBoostCoroutine != null)
+        {
+            StopCoroutine(speedBoostCoroutine);
+        }
+
         if (hasSpeedBoost)
         {
-            StopCoroutine("SpeedBoostCoroutine");
+            // Se já tem o boost, apenas reseta o timer visual com a nova duração
+            if (speedBoostBar != null) speedBoostBar.ResetTimer(duration);
         }
-        StartCoroutine(SpeedBoostCoroutine(duration, effectValue));
+        else
+        {
+            // Se não tem, inicia a barra do zero
+            if (speedBoostBar != null) speedBoostBar.StartTimer(duration);
+        }
+
+        // Inicia a nova corrotina e guarda a referência
+        speedBoostCoroutine = StartCoroutine(SpeedBoostCoroutine(duration, effectValue));
     }
 
     private IEnumerator SpeedBoostCoroutine(float duration, float effectValue)
@@ -247,6 +252,9 @@ public class PlayerController : MonoBehaviour
         
         speedMultiplier = 1f;
         hasSpeedBoost = false;
+        speedBoostCoroutine = null; // Limpa a referência
+        
+        if (speedBoostBar != null) speedBoostBar.StopTimer();
     }
     
     private void UpdateSpeedIncrease()
@@ -260,13 +268,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // --- LÓGICA DE SHIELD CORRIGIDA ---
     public void ApplyShield(float duration)
     {
+        // Para a corrotina anterior se existir
+        if (shieldCoroutine != null)
+        {
+            StopCoroutine(shieldCoroutine);
+        }
+
         if (shieldActive)
         {
-            StopCoroutine("ShieldCoroutine");
+            if (shieldBar != null) shieldBar.ResetTimer(duration);
         }
-        StartCoroutine(ShieldCoroutine(duration));
+        else
+        {
+            if (shieldBar != null) shieldBar.StartTimer(duration);
+        }
+        
+        // Inicia e guarda referência
+        shieldCoroutine = StartCoroutine(ShieldCoroutine(duration));
     }
 
     private IEnumerator ShieldCoroutine(float duration)
@@ -277,14 +298,14 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(duration);
         
         shieldActive = false;
+        shieldCoroutine = null; // Limpa a referência
         Debug.Log("Shield desativado!");
+        
+        if (shieldBar != null) shieldBar.StopTimer();
     }
 
     public bool getIsShield()
     {
         return shieldActive;
     }
-
 }
-
-    
