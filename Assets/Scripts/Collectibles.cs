@@ -61,8 +61,8 @@ public class Collectibles : MonoBehaviour
     private void HideAndDestroyAfterSound()
     {
         // Desativa visual mas mantém objeto ativo para o som terminar
-        GetComponent<Renderer>().enabled = false;
-        GetComponent<Collider>().enabled = false;
+        if(GetComponent<Renderer>() != null) GetComponent<Renderer>().enabled = false;
+        if(GetComponent<Collider>() != null) GetComponent<Collider>().enabled = false;
 
         // Destroi após o som terminar
         float soundLength = collectSound != null ? collectSound.length : 0f;

@@ -30,7 +30,8 @@ public class SpawnManager : MonoBehaviour
         float spawnZ = Random.Range(zPosition[0], zPosition[1]);
         float spawnX = xPosition[Random.Range(0, xPosition.Length)];
         Vector3 spawnPosition = new(spawnX, yPosition, spawnZ);
-        Instantiate(objectPrefab[Random.Range(0, objectPrefab.Length)], spawnPosition, Quaternion.identity);
+        int i = Random.Range(0, objectPrefab.Length);
+        Instantiate(objectPrefab[i], spawnPosition, Quaternion.identity);
     }
 
     private void SpawnObject()
@@ -38,6 +39,7 @@ public class SpawnManager : MonoBehaviour
         float spawnZ = zPosition[0];
         float spawnX = xPosition[Random.Range(0, xPosition.Length)];
         Vector3 spawnPosition = new(spawnX, yPosition, spawnZ);
+        int i = Random.Range(0, objectPrefab.Length);
         Instantiate(objectPrefab[Random.Range(0, objectPrefab.Length)], spawnPosition, Quaternion.identity);
     }
 
