@@ -16,6 +16,14 @@ public class SimpleStoreManager : MonoBehaviour
     private void Start()
     {
         //PlayerPrefs.DeleteAll(); // REMOVER APÓS TESTES
+        
+        // Garante que CharacterSelection existe
+        if (CharacterSelection.Instance == null)
+        {
+            GameObject selectionObj = new GameObject("CharacterSelection");
+            selectionObj.AddComponent<CharacterSelection>();
+        }
+        
         // Encontra todos os personagens na loja
         characters = GetComponentsInChildren<SimpleStoreCharacter>(true);
         
@@ -45,6 +53,15 @@ public class SimpleStoreManager : MonoBehaviour
         character.SetSelected(true);
         selectedCharacter = character;
         
+        // Salva globalmente para usar em outras cenas
+        if (CharacterSelection.Instance != null)
+        {
+            CharacterSelection.Instance.SetSelectedCharacter(
+                character.CharacterID, 
+                character.CharacterPrefab
+            );
+        }
+        
         Debug.Log($"Personagem {character.CharacterID} selecionado!");
     }
     
@@ -67,8 +84,7 @@ public class SimpleStoreManager : MonoBehaviour
             var character = characters.FirstOrDefault(c => c.CharacterID == savedID);
             if (character != null && character.IsPurchased)
             {
-                character.SetSelected(true);
-                selectedCharacter = character;
+                SelectCharacter(character); // Usa SelectCharacter para salvar globalmente
                 return;
             }
         }
@@ -77,8 +93,7 @@ public class SimpleStoreManager : MonoBehaviour
         var defaultCharacter = characters.FirstOrDefault(c => c.IsDefault && c.IsPurchased);
         if (defaultCharacter != null)
         {
-            defaultCharacter.SetSelected(true);
-            selectedCharacter = defaultCharacter;
+            SelectCharacter(defaultCharacter); // Usa SelectCharacter para salvar globalmente
             return;
         }
         
@@ -86,8 +101,7 @@ public class SimpleStoreManager : MonoBehaviour
         var firstPurchased = characters.FirstOrDefault(c => c.IsPurchased);
         if (firstPurchased != null)
         {
-            firstPurchased.SetSelected(true);
-            selectedCharacter = firstPurchased;
+            SelectCharacter(firstPurchased); // Usa SelectCharacter para salvar globalmente
         }
     }
     

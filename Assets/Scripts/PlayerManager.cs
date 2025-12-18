@@ -107,18 +107,31 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     private GameObject GetPlayerPrefab(int playerIndex)
     {
-        // Tenta obter da loja (personagem selecionado)
+        // Prioridade 1: CharacterSelection (persistente entre cenas)
+        if (CharacterSelection.Instance != null && CharacterSelection.Instance.HasSelection())
+        {
+            GameObject prefab = CharacterSelection.Instance.GetSelectedCharacterPrefab();
+            if (prefab != null)
+            {
+                Debug.Log($"Usando personagem do CharacterSelection: {CharacterSelection.Instance.GetSelectedCharacterID()}");
+                return prefab;
+            }
+        }
+        
+        // Prioridade 2: Tenta obter da loja se estiver na mesma cena
         SimpleStoreManager storeManager = FindFirstObjectByType<SimpleStoreManager>();
         if (storeManager != null)
         {
             SimpleStoreCharacter selectedCharacter = storeManager.GetSelectedCharacter();
             if (selectedCharacter != null && selectedCharacter.CharacterPrefab != null)
             {
+                Debug.Log($"Usando personagem da loja: {selectedCharacter.CharacterID}");
                 return selectedCharacter.CharacterPrefab;
             }
         }
         
         // Fallback para prefab padrão
+        Debug.Log("Usando prefab padrão");
         return defaultPlayerPrefab;
     }
     
