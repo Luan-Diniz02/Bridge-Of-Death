@@ -40,6 +40,14 @@ public class CurrencyManager : MonoBehaviour
         LoadCurrency();
     }
     
+    private void OnDestroy()
+    {
+        if (instance == this)
+        {
+            instance = null;
+        }
+    }
+    
     private void LoadCurrency()
     {
         currentCurrency = PlayerPrefs.GetInt(CURRENCY_KEY, 0);

@@ -229,6 +229,16 @@ public class PlayerController : MonoBehaviour
         if (playerInput != null) playerInput.ActivateInput();
     }
 
+    /// <summary>
+    /// Define as barras de UI para os power-ups (usado pelo UIManager)
+    /// </summary>
+    public void SetUIBars(BarManager speedBoost, BarManager shield)
+    {
+        speedBoostBar = speedBoost;
+        shieldBar = shield;
+        Debug.Log($"UI Bars atribuídas ao player: SpeedBoost={speedBoost != null}, Shield={shield != null}");
+    }
+
     // --- LÓGICA DE SPEED BOOST CORRIGIDA ---
     public void ApplySpeedBoost(float duration, float effectValue)
     {

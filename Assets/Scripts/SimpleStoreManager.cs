@@ -85,6 +85,7 @@ public class SimpleStoreManager : MonoBehaviour
             if (character != null && character.IsPurchased)
             {
                 SelectCharacter(character); // Usa SelectCharacter para salvar globalmente
+                RefreshAllCharactersUI();
                 return;
             }
         }
@@ -94,6 +95,7 @@ public class SimpleStoreManager : MonoBehaviour
         if (defaultCharacter != null)
         {
             SelectCharacter(defaultCharacter); // Usa SelectCharacter para salvar globalmente
+            RefreshAllCharactersUI();
             return;
         }
         
@@ -102,6 +104,18 @@ public class SimpleStoreManager : MonoBehaviour
         if (firstPurchased != null)
         {
             SelectCharacter(firstPurchased); // Usa SelectCharacter para salvar globalmente
+            RefreshAllCharactersUI();
+        }
+    }
+    
+    /// <summary>
+    /// Força atualização da UI de todos os personagens
+    /// </summary>
+    private void RefreshAllCharactersUI()
+    {
+        foreach (var character in characters)
+        {
+            character.RefreshUI();
         }
     }
     

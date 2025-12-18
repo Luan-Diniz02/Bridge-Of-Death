@@ -95,6 +95,14 @@ public class SimpleStoreCharacter : MonoBehaviour
         UpdateUI();
     }
     
+    /// <summary>
+    /// Método público para forçar atualização da UI
+    /// </summary>
+    public void RefreshUI()
+    {
+        UpdateUI();
+    }
+    
     private void UpdateUI()
     {
         if (actionButton == null)
