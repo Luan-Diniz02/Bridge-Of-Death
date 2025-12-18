@@ -47,6 +47,11 @@ public class SimpleStoreManager : MonoBehaviour
         Debug.Log($"Personagem {character.CharacterID} selecionado!");
     }
     
+    public SimpleStoreCharacter GetSelectedCharacter()
+    {
+        return selectedCharacter;
+    }
+    
     public string GetSelectedCharacterID()
     {
         return selectedCharacter?.CharacterID;
@@ -67,7 +72,16 @@ public class SimpleStoreManager : MonoBehaviour
             }
         }
         
-        // Se não houver seleção, seleciona o primeiro comprado
+        // Se não houver seleção salva, seleciona o personagem padrão (IsDefault = true)
+        var defaultCharacter = characters.FirstOrDefault(c => c.IsDefault && c.IsPurchased);
+        if (defaultCharacter != null)
+        {
+            defaultCharacter.SetSelected(true);
+            selectedCharacter = defaultCharacter;
+            return;
+        }
+        
+        // Caso não encontre o padrão, seleciona o primeiro comprado
         var firstPurchased = characters.FirstOrDefault(c => c.IsPurchased);
         if (firstPurchased != null)
         {

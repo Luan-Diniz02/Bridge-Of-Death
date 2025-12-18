@@ -26,6 +26,7 @@ public class SimpleStoreCharacter : MonoBehaviour
     public string CharacterID => characterID;
     public bool IsPurchased => isPurchased;
     public bool IsSelected => isSelected;
+    public bool IsDefault => isDefault;
     public GameObject CharacterPrefab => characterPrefab;
     
     private void Start()
