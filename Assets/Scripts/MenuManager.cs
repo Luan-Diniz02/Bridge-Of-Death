@@ -12,7 +12,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject settingsMenu;
     [SerializeField] private GameObject audioPanel, videoPanel, creditsPanel;
     [SerializeField] private GameObject buttonAudioPressed, buttonVideoPressed, buttonCreditsPressed;
-    [SerializeField] private GameObject playMenu, exitMenu;
+    [SerializeField] private GameObject playMenu, storeMenu, exitMenu;
     
     [Header("Settings Managers")]
     [SerializeField] private AudioSettingsManager audioSettings;
@@ -84,12 +84,21 @@ public class MenuManager : MonoBehaviour
     {
         playMenu.SetActive(true);
         exitMenu.SetActive(false);
+        storeMenu.SetActive(false);
     }
 
     public void OpenExitMenu()
     {
         exitMenu.SetActive(true);
         playMenu.SetActive(false);
+        storeMenu.SetActive(false);
+    }
+
+    public void OpenStoreMenu()
+    {
+        storeMenu.SetActive(true);
+        playMenu.SetActive(false);
+        exitMenu.SetActive(false);
     }
 
     public void CloseExitMenu()
