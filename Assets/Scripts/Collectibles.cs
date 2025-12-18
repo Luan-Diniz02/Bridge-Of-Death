@@ -88,6 +88,7 @@ public class Collectibles : MonoBehaviour
                 break;
                 
             case CollectibleType.Heal:
+                player.HealPlayer((int)effectValue);
                 Debug.Log("Heal ativado!");
                 break;
         }

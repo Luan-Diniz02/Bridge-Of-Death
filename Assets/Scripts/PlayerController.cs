@@ -308,4 +308,9 @@ public class PlayerController : MonoBehaviour
     {
         return shieldActive;
     }
+
+    public int GetCurrentHealth()
+    {
+        return currentHealth;
+    }
 }
