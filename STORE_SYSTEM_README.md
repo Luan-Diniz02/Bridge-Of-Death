@@ -1,119 +1,68 @@
-# Sistema de Loja - Bridge Of Death
+# Sistema de Loja Simplificado - Bridge Of Death
 
 ## 📋 Visão Geral
 
-Sistema completo de loja para compra de personagens usando moedas coletadas durante o jogo. O sistema foi desenvolvido seguindo os princípios SOLID para garantir código limpo, manutenível e extensível.
+Sistema simples de loja para compra de personagens usando moedas coletadas durante o jogo. Focado em facilidade de uso com personagens já instanciados na UI.
 
 ## 🎯 Arquivos Criados
 
-### 1. **CharacterData.cs** (ScriptableObject)
-Define os dados de um personagem comprável:
-- Nome, ID único, descrição
-- Ícone e prefab do personagem
-- Preço e status de personagem padrão
-
-### 2. **StoreItem.cs**
-Representa um item na loja com lógica de compra e seleção.
-
-### 3. **CurrencyManager.cs** (Singleton)
+### 1. **CurrencyManager.cs** (Singleton)
 Gerencia as moedas do jogador de forma persistente:
 - Adicionar/gastar moedas
 - Salvar/carregar usando PlayerPrefs
 - Sistema de eventos para atualização de UI
 
-### 4. **StoreManager.cs**
-Gerencia toda a lógica da loja:
-- Compra de personagens
-- Seleção de personagem ativo
-- Persistência de compras
-- Integração com CurrencyManager
+### 2. **SimpleStoreCharacter.cs**
+Script que você anexa a cada personagem na sua UI da loja:
+- Lógica de compra e seleção
+- Gerenciamento de estado (comprado/selecionado)
+- Atualização automática de UI
+- Persistência individual
 
-### 5. **StoreItemUI.cs**
-Controla a UI de cada item na loja:
-- Atualização visual baseada no estado
-- Botões de compra e seleção
-- Indicadores visuais
+### 3. **SimpleStoreManager.cs**
+Gerenciador simples que coordena todos os personagens:
+- Controla qual personagem está selecionado
+- Atualiza display de moedas
+- Carrega estado salvo
 
 ## 🚀 Como Usar
 
-### Passo 1: Criar CharacterData
+### Passo 1: Configurar o Painel da Loja
 
-1. No Unity, clique com botão direito na pasta `Assets`
-2. Vá em `Create > Store > Character Data`
-3. Configure os dados do personagem:
-   - **Character Name**: Nome exibido
-   - **Character ID**: ID único (ex: "character_1")
-   - **Description**: Descrição do personagem
-   - **Character Icon**: Sprite do ícone
-   - **Character Prefab**: Prefab do modelo 3D
-   - **Price**: Preço em moedas
-   - **Is Default**: Marque se for o personagem inicial gratuito
+1. **No seu Canvas**, crie/abra o painel da loja que você já tem
+2. **Adicione o componente `SimpleStoreManager`** ao GameObject principal da loja
+3. **Configure a referência:**
+   - **Currency Text**: Arraste o TextMeshProUGUI que mostra as moedas
 
-### Passo 2: Configurar a UI da Loja
+### Passo 2: Configurar Cada Personagem
 
-1. **Criar o painel da loja** no Canvas do menu principal
-2. **Adicionar componente StoreManager** ao GameObject da loja
+Para cada personagem já instanciado na sua UI:
 
-3. **Estrutura recomendada da UI:**
-```
-Store Panel
-├── Header
-│   ├── Title Text ("LOJA")
-│   └── Currency Display
-│       ├── Coin Icon
-│       └── Currency Text
-└── Store Items Container (Grid Layout Group)
-    └── [Items serão instanciados aqui]
-```
+1. **Adicione o componente `SimpleStoreCharacter`**
+2. **Configure no Inspector:**
+   - **Character ID**: ID único (ex: "character_1", "character_2")
+   - **Price**: Preço em moedas (ex: 50)
+   - **Is Default**: ✓ apenas para o personagem inicial gratuito
+   
+3. **Arraste as referências UI:**
+   - **Action Button**: Botão único (comprar/selecionar)
+   - **Button Text**: TextMeshProUGUI do texto do botão
+   - **Coin Icon**: GameObject do ícone da moeda (aparece só quando não comprado)
+   - **Locked Overlay**: (Opcional) Overlay quando bloqueado
+   - **Selected Indicator**: (Opcional) Indicador visual de selecionado
+   
+**Como o botão funciona:**
+- **Não comprado**: Mostra o preço + ícone da moeda
+- **Comprado**: Mostra "SELECIONAR"
+- **Selecionado**: Mostra "SELECIONADO" (desabilitado)
 
-4. **Criar Prefab do StoreItem:**
-```
-StoreItem Prefab
-├── Background Image
-├── Character Icon (Image)
-├── Character Name (TextMeshProUGUI)
-├── Price Container
-│   ├── Coin Icon
-│   └── Price Text
-├── Purchase Button
-│   └── Button Text
-├── Select Button
-│   └── Button Text
-├── Locked Overlay (opcional)
-└── Selected Indicator (opcional)
-```
+### Passo 3: Pronto!
 
-### Passo 3: Configurar o StoreManager
-
-No Inspector do StoreManager, configure:
-- **Currency Text**: Referência ao texto que mostra as moedas
-- **Store Items Container**: Transform onde os itens serão instanciados
-- **Store Item Prefab**: Prefab do UI do item
-- **Available Characters**: Lista de CharacterData que estarão na loja
-
-### Passo 4: Configurar o StoreItemUI Prefab
-
-No prefab do item da loja, configure todas as referências:
-- Character Icon, Name Text, Price Text
-- Purchase Button e Select Button
-- Locked Overlay (opcional)
-- Selected Indicator (opcional)
-
-### Passo 5: Integração com MenuManager
-
-Adicione ao MenuManager.cs se necessário:
-
-```csharp
-[SerializeField] private StoreManager storeManager;
-
-public void OpenStore()
-{
-    if(storeManager != null) 
-    {
-        storeManager.gameObject.SetActive(true);
-    }
-}
-```
+O sistema funciona automaticamente:
+- ✅ Moedas são salvas ao completar fases
+- ✅ Compras são salvas automaticamente
+- ✅ Personagem selecionado é lembrado
+- ✅ UI atualiza automaticamente
 
 ## 💰 Sistema de Moedas
 
@@ -185,60 +134,57 @@ storeManager.OnCharacterSelected += (characterData) =>
     Debug.Log($"Selecionado: {characterData.CharacterName}");
 };
 ```
+Obtendo o Personagem Selecionado
 
-## 💾 Sistema de Persistência
+Para saber qual personagem está selecionado:
 
-Todos os dados são salvos automaticamente usando PlayerPrefs:
-- **Moedas totais**: Salvas ao adicionar/gastar
-- **Personagens comprados**: Salvos ao comprar
-- **Personagem selecionado**: Salvo ao selecionar
-
-Para resetar tudo:
 ```csharp
-PlayerPrefs.DeleteAll();
+SimpleStoreManager storeManager = FindObjectOfType<SimpleStoreManager>();
+string selectedID = storeManager.GetSelectedCharacterID();
+
+// Use o ID para ativar/desativar GameObjects, trocar materiais, etc.
+if (selectedID == "character_1")
+{
+    // Lógica para personagem 1
+}
 ```
 
-## 🎨 Customização
+## 📊 Sistema de Eventos
 
-### Cores e Estilos
-Customize a aparência editando o prefab do StoreItem.
+Você pode escutar mudanças de moeda:
 
-### Adicionar Novos Personagens
-1. Crie um novo CharacterData
-2. Adicione-o à lista `Available Characters` no StoreManager
+```csharp
+private void OnEnable()
+{
+    CurrencyManager.Instance.OnCurrencyChanged += OnCurrencyChanged;
+}
 
-### Modificar Preços
-Edite o valor `Price` no CharacterData.
-
-## ✅ Checklist de Configuração
-
-- [ ] Criar pelo menos um CharacterData com `Is Default = true`
-- [ ] Criar prefab do StoreItem com StoreItemUI component
-- [ ] Configurar UI da loja no Canvas
-- [ ] Adicionar StoreManager e configurar referências
-- [ ] Adicionar CharacterData à lista do StoreManager
+private void OnDisable()
+{
+    ifAdicionar `SimpleStoreManager` ao painel da loja
+- [ ] Configurar Currency Text no SimpleStoreManager
+- [ ] Adicionar `SimpleStoreCharacter` a cada personagem na UI
+- [ ] Definir Character ID único para cada um
+- [ ] Definir preços
+- [ ] Marcar um personagem como `Is Default = true`
+- [ ] Configurar botões e referências UI
 - [ ] Testar compra e seleção
 - [ ] Verificar persistência (fechar e reabrir o jogo)
 
 ## 🐛 Troubleshooting
 
 **Moedas não estão sendo salvas:**
-- Verifique se o CurrencyManager está sendo criado (ele é um Singleton)
-- Confirme que PlayerPrefs.Save() está sendo chamado
+- Verifique se completou uma fase (LevelCompleted adiciona moedas)
+- Confirme que o CurrencyManager foi criado automaticamente
 
-**Personagens não aparecem na loja:**
-- Verifique se os CharacterData estão na lista `Available Characters`
-- Confirme que o prefab do StoreItem tem o componente StoreItemUI
+**Botões não funcionam:**
+- Verifique se os botões têm o componente Button
+- Confirme que as referências foram arrastadas no Inspector
 
 **Não consigo comprar personagens:**
-- Verifique se tem moedas suficientes
-- Confirme que o personagem não está marcado como já comprado
+- Verifique se tem moedas suficientes (complete uma fase)
+- Confirme que o Character ID é único para cada personagem
 
-## 🎯 Próximos Passos Sugeridos
-
-1. **Animações**: Adicionar animações de compra e seleção
-2. **Sons**: Adicionar feedback sonoro para compras
-3. **Preview 3D**: Mostrar modelo 3D do personagem na loja
-4. **Categorias**: Organizar personagens por categorias
-5. **Ofertas**: Sistema de ofertas/descontos temporários
-6. **Conquistas**: Desbloquear personagens por conquistas além de compra
+**Personagem não permanece selecionado:**
+- Verifique se o Character ID está correto
+- Confirme que apenas um personagem tem IsDefault marcado

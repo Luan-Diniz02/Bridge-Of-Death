@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f3802c6df7da6724b9476478415b71b6, type: 3}
-  m_Name: Luan_Negative
+  m_Name: Saulo
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  characterName: Luan
-  characterID: character_luan
+  characterName: Saulo
+  characterID: character_saulo
   description: 
-  characterIcon: {fileID: -647399155, guid: d0a9856b5da8e2443b85d7f626a6e5f7, type: 3}
-  characterPrefab: {fileID: 6382280520658541037, guid: 01164be779472854e891078a30269323,
+  characterIcon: {fileID: -1098913253, guid: 522ed68790c93bb4585ddd364a42b1ac, type: 3}
+  characterPrefab: {fileID: 9004593619112199787, guid: cb4a26a3815ea744099e4a25b4e2ae5c,
     type: 3}
-  price: 0
-  isDefault: 1
+  price: 200
+  isDefault: 0
