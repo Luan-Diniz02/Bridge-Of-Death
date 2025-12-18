@@ -2278,7 +2278,7 @@ MonoBehaviour:
   characterID: character_saulo
   price: 200
   isDefault: 0
-  characterPrefab: {fileID: 6382280520658541037, guid: 01164be779472854e891078a30269323,
+  characterPrefab: {fileID: 9004593619112199787, guid: cb4a26a3815ea744099e4a25b4e2ae5c,
     type: 3}
   actionButton: {fileID: 1528418754}
   buttonText: {fileID: 937377292}

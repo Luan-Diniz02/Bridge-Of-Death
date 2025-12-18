@@ -414,6 +414,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   speedBoostBar: {fileID: 0}
   shieldBar: {fileID: 0}
+  powerUpBonus: 1.5
   speed: 3
   jumpForce: 5
   gravity: 10

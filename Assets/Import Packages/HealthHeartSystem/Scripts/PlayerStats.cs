@@ -64,4 +64,22 @@ public class PlayerStats : MonoBehaviour
         if (onHealthChangedCallback != null)
             onHealthChangedCallback.Invoke();
     }
+
+    public void SetHealth(float health)
+    {
+        this.health = health;
+        ClampHealth();
+    }
+
+    public void SetMaxHealth(float maxHealth)
+    {
+        this.maxHealth = maxHealth;
+        ClampHealth();
+    }
+
+    public void SetMaxTotalHealth(float maxTotalHealth)
+    {
+        this.maxTotalHealth = maxTotalHealth;
+        ClampHealth();
+    }
 }

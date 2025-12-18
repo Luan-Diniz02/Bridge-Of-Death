@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     [Header("UI Power-Ups")]
     [SerializeField] private BarManager speedBoostBar;
     [SerializeField] private BarManager shieldBar;
+    [SerializeField] private float powerUpBonus = 1f;
 
     [Header("Configurações de Movimento")]
     [SerializeField] private float speed = 5f;
@@ -47,8 +48,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 verticalVelocityVector;
     private Vector3 targetPosition;
     private float baseSpeed;
-    private float speedMultiplier = 1f; 
-    private bool hasSpeedBoost = false;
+    private float speedMultiplier = 1f;
     
     [Header("Incremento de Velocidade")]
     [SerializeField] private float speedIncreaseAmount = 0.1f;
@@ -75,6 +75,12 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         currentHealth = maxHealth;
+        
+        PlayerStats.Instance.SetMaxTotalHealth(maxHealth);
+        PlayerStats.Instance.SetMaxHealth(maxHealth);
+        HealPlayer(maxHealth); // Atualiza UI de vida
+
+        
         baseSpeed = speed;
         nextSpeedIncreaseTime = Time.time + speedIncreaseInterval;
     }
@@ -242,37 +248,33 @@ public class PlayerController : MonoBehaviour
     // --- LÓGICA DE SPEED BOOST CORRIGIDA ---
     public void ApplySpeedBoost(float duration, float effectValue)
     {
+        float finalDuration = duration * powerUpBonus;
+        
         // Se já existe uma corrotina rodando, para ela IMEDIATAMENTE
         if (speedBoostCoroutine != null)
         {
             StopCoroutine(speedBoostCoroutine);
-        }
-
-        if (hasSpeedBoost)
-        {
-            // Se já tem o boost, apenas reseta o timer visual com a nova duração
-            if (speedBoostBar != null) speedBoostBar.ResetTimer(duration);
+            // Reseta o timer com a nova duração
+            if (speedBoostBar != null) speedBoostBar.ResetTimer(finalDuration);
         }
         else
         {
-            // Se não tem, inicia a barra do zero
-            if (speedBoostBar != null) speedBoostBar.StartTimer(duration);
+            // Inicia a barra do zero
+            if (speedBoostBar != null) speedBoostBar.StartTimer(finalDuration);
         }
 
         // Inicia a nova corrotina e guarda a referência
-        speedBoostCoroutine = StartCoroutine(SpeedBoostCoroutine(duration, effectValue));
+        speedBoostCoroutine = StartCoroutine(SpeedBoostCoroutine(finalDuration, effectValue));
     }
 
     private IEnumerator SpeedBoostCoroutine(float duration, float effectValue)
     {
-        hasSpeedBoost = true;
         speedMultiplier = effectValue;
         
         yield return new WaitForSeconds(duration);
         
         speedMultiplier = 1f;
-        hasSpeedBoost = false;
-        speedBoostCoroutine = null; // Limpa a referência
+        speedBoostCoroutine = null;
         
         if (speedBoostBar != null) speedBoostBar.StopTimer();
     }
@@ -291,23 +293,23 @@ public class PlayerController : MonoBehaviour
     // --- LÓGICA DE SHIELD CORRIGIDA ---
     public void ApplyShield(float duration)
     {
+        float finalDuration = duration * powerUpBonus;
+        
         // Para a corrotina anterior se existir
         if (shieldCoroutine != null)
         {
             StopCoroutine(shieldCoroutine);
-        }
-
-        if (shieldActive)
-        {
-            if (shieldBar != null) shieldBar.ResetTimer(duration);
+            // Reseta o timer com a nova duração
+            if (shieldBar != null) shieldBar.ResetTimer(finalDuration);
         }
         else
         {
-            if (shieldBar != null) shieldBar.StartTimer(duration);
+            // Inicia a barra do zero
+            if (shieldBar != null) shieldBar.StartTimer(finalDuration);
         }
         
         // Inicia e guarda referência
-        shieldCoroutine = StartCoroutine(ShieldCoroutine(duration));
+        shieldCoroutine = StartCoroutine(ShieldCoroutine(finalDuration));
     }
 
     private IEnumerator ShieldCoroutine(float duration)
@@ -318,7 +320,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(duration);
         
         shieldActive = false;
-        shieldCoroutine = null; // Limpa a referência
+        shieldCoroutine = null;
         Debug.Log("Shield desativado!");
         
         if (shieldBar != null) shieldBar.StopTimer();
@@ -332,5 +334,10 @@ public class PlayerController : MonoBehaviour
     public int GetCurrentHealth()
     {
         return currentHealth;
+    }
+
+    public int GetMaxHealth()
+    {
+        return maxHealth;
     }
 }

@@ -277,11 +277,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   speedBoostBar: {fileID: 0}
   shieldBar: {fileID: 0}
-  speed: 3
+  powerUpBonus: 1
+  speed: 5
   jumpForce: 5
   gravity: 10
   allowMovement: 1
-  maxHealth: 3
+  maxHealth: 5
   currentHealth: 0
   dead: 0
   invincibilityDuration: 1.5
