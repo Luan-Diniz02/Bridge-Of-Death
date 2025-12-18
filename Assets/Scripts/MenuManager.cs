@@ -9,17 +9,35 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject settingsMenu;
     [SerializeField] private GameObject audioPanel, videoPanel, creditsPanel;
     [SerializeField] private GameObject buttonAudioPressed, buttonVideoPressed, buttonCreditsPressed;
+    [SerializeField] private GameObject playMenu, exitMenu;
 
     private void Awake()
     {
         Application.targetFrameRate = targetFrameRate;
     }
 
+    public void OpenPlayMenu()
+    {
+        playMenu.SetActive(true);
+        exitMenu.SetActive(false);
+    }
+
+    public void OpenExitMenu()
+    {
+        exitMenu.SetActive(true);
+        playMenu.SetActive(false);
+    }
+
+    public void CloseExitMenu()
+    {
+        exitMenu.SetActive(false);
+    }
+
     public void OpenSettings()
     {
         mainMenu.SetActive(false);
         settingsMenu.SetActive(true);
-        
+
         OpenPanel(audioPanel);
         PressButton(buttonAudioPressed);
     }
