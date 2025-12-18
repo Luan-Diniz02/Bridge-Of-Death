@@ -20,12 +20,15 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private Slider musicVolumeSlider;
     
     [Header("Video Settings")]
-    [SerializeField] private UnityEngine.UI.Toggle fullscreenToggle;
+    [SerializeField] private UnityEngine.UI.Button fullscreenButton;
+    [SerializeField] private UnityEngine.UI.Button fpsButton;
     [SerializeField] private TMP_Dropdown resolutionDropdown;
-    [SerializeField] private UnityEngine.UI.Toggle fpsToggle;
+    [SerializeField] private TextMeshProUGUI fullscreenButtonText;
+    [SerializeField] private TextMeshProUGUI fpsButtonText;
     [SerializeField] private TextMeshProUGUI fpsText;
     
     private Resolution[] resolutions;
+    private bool isFullscreen = true;
     private bool showFPS = false;
     private float deltaTime = 0.0f;
 
@@ -83,14 +86,14 @@ public class MenuManager : MonoBehaviour
         if (musicVolumeSlider != null)
             musicVolumeSlider.onValueChanged.AddListener(SetMusicVolume);
             
-        if (fullscreenToggle != null)
-            fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
+        if (fullscreenButton != null)
+            fullscreenButton.onClick.AddListener(ToggleFullscreen);
             
         if (resolutionDropdown != null)
             resolutionDropdown.onValueChanged.AddListener(SetResolution);
             
-        if (fpsToggle != null)
-            fpsToggle.onValueChanged.AddListener(SetShowFPS);
+        if (fpsButton != null)
+            fpsButton.onClick.AddListener(ToggleFPS);
     }
 
     public void OpenPlayMenu()
@@ -196,10 +199,20 @@ public class MenuManager : MonoBehaviour
     
     // ========== MÉTODOS DE VÍDEO ==========
     
-    public void SetFullscreen(bool isFullscreen)
+    public void ToggleFullscreen()
     {
+        isFullscreen = !isFullscreen;
         Screen.fullScreen = isFullscreen;
+        UpdateFullscreenButtonText();
         PlayerPrefs.SetInt("Fullscreen", isFullscreen ? 1 : 0);
+    }
+    
+    private void UpdateFullscreenButtonText()
+    {
+        if (fullscreenButtonText != null)
+        {
+            fullscreenButtonText.text = isFullscreen ? "on" : "off";
+        }
     }
     
     public void SetResolution(int resolutionIndex)
@@ -207,19 +220,28 @@ public class MenuManager : MonoBehaviour
         if (resolutionIndex >= 0 && resolutionIndex < resolutions.Length)
         {
             Resolution resolution = resolutions[resolutionIndex];
-            Screen.SetResolution(resolution.width, resolution.height, Screen.fullScreen);
+            Screen.SetResolution(resolution.width, resolution.height, isFullscreen);
             PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
         }
     }
     
-    public void SetShowFPS(bool show)
+    public void ToggleFPS()
     {
-        showFPS = show;
+        showFPS = !showFPS;
         if (fpsText != null)
         {
-            fpsText.gameObject.SetActive(show);
+            fpsText.gameObject.SetActive(showFPS);
         }
-        PlayerPrefs.SetInt("ShowFPS", show ? 1 : 0);
+        UpdateFPSButtonText();
+        PlayerPrefs.SetInt("ShowFPS", showFPS ? 1 : 0);
+    }
+    
+    private void UpdateFPSButtonText()
+    {
+        if (fpsButtonText != null)
+        {
+            fpsButtonText.text = showFPS ? "on" : "off";
+        }
     }
     
     private void UpdateFPSDisplay()
@@ -253,12 +275,9 @@ public class MenuManager : MonoBehaviour
         }
         
         // Carrega fullscreen
-        if (fullscreenToggle != null)
-        {
-            bool isFullscreen = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
-            fullscreenToggle.isOn = isFullscreen;
-            SetFullscreen(isFullscreen);
-        }
+        isFullscreen = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
+        Screen.fullScreen = isFullscreen;
+        UpdateFullscreenButtonText();
         
         // Carrega resolução
         if (resolutionDropdown != null)
@@ -269,12 +288,12 @@ public class MenuManager : MonoBehaviour
         }
         
         // Carrega FPS
-        if (fpsToggle != null)
+        showFPS = PlayerPrefs.GetInt("ShowFPS", 0) == 1;
+        if (fpsText != null)
         {
-            bool showFPS = PlayerPrefs.GetInt("ShowFPS", 0) == 1;
-            fpsToggle.isOn = showFPS;
-            SetShowFPS(showFPS);
+            fpsText.gameObject.SetActive(showFPS);
         }
+        UpdateFPSButtonText();
     }
     
     public void SaveSettings()

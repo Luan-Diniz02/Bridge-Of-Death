@@ -4377,6 +4377,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MenuManager
   targetFrameRate: 60
+  mainMenu: {fileID: 0}
+  settingsMenu: {fileID: 0}
+  audioPanel: {fileID: 0}
+  videoPanel: {fileID: 0}
+  creditsPanel: {fileID: 0}
+  buttonAudioPressed: {fileID: 0}
+  buttonVideoPressed: {fileID: 0}
+  buttonCreditsPressed: {fileID: 0}
+  playMenu: {fileID: 0}
+  exitMenu: {fileID: 0}
+  audioMixer: {fileID: 0}
+  audioVolumeSlider: {fileID: 0}
+  musicVolumeSlider: {fileID: 0}
+  fullscreenButton: {fileID: 0}
+  fpsButton: {fileID: 0}
+  resolutionDropdown: {fileID: 0}
+  fullscreenButtonText: {fileID: 0}
+  fpsButtonText: {fileID: 0}
+  fpsText: {fileID: 0}
 --- !u!4 &824264334
 Transform:
   m_ObjectHideFlags: 0
@@ -5929,7 +5948,8 @@ AudioSource:
   m_GameObject: {fileID: 1425784725}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -2395728894047279263, guid: d9a252d86a18b72419927e7f9096febe,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 79a0c1b5d72bfc748bc67ce6e4c6115b, type: 3}
   m_PlayOnAwake: 1
