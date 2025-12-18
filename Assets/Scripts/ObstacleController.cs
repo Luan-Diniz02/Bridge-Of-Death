@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class ObstacleController : MonoBehaviour
 {
-    [SerializeField] private PlayerController playerController;
+    // [SerializeField] private PlayerController playerController; // REMOVIDO - detecta automaticamente
     [SerializeField] private AudioClip hitSound;
     private AudioSource audioSource;
 
@@ -14,13 +14,18 @@ public class ObstacleController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("Player2"))
         {
-            HideAndDestroyAfterSound();
+            // Pega o PlayerController do objeto que colidiu
+            PlayerController hitPlayer = other.GetComponent<PlayerController>();
+            if (hitPlayer != null)
+            {
+                HideAndDestroyAfterSound(hitPlayer);
+            }
         }
     }
 
-    private void HideAndDestroyAfterSound()
+    private void HideAndDestroyAfterSound(PlayerController playerController)
     {
         playerController.DamagePlayer();
         // Desativa visual mas mantém objeto ativo para o som terminar

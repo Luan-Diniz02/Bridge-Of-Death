@@ -12,6 +12,10 @@ using System;
 [RequireComponent(typeof(AudioSource))]
 public class PlayerController : MonoBehaviour
 {
+    // Singleton para acesso rápido (útil para single player)
+    // Em multiplayer, use PlayerManager.GetPlayer(index) ou GetClosestPlayer()
+    public static PlayerController Instance { get; private set; }
+    
     private CharacterController characterController;
     private PlayerInput playerInput;
     private Animator animator;
@@ -57,6 +61,12 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
+        // Singleton (apenas para Player 1 / single player)
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        
         characterController = GetComponent<CharacterController>();
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();

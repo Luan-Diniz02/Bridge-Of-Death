@@ -7,7 +7,7 @@ using UnityEngine.Events;
 [RequireComponent(typeof(AudioSource))]
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] private GameObject player;
+    // [SerializeField] private GameObject player; // REMOVIDO - agora usa PlayerManager
     [SerializeField] private float speedEnemy = 3f;
     [SerializeField] private float detectionRange = 5f;
     [SerializeField] private float timeToDestroy = 5f;
@@ -48,26 +48,59 @@ public class EnemyController : MonoBehaviour
 
     void Awake()
     {
-        playerTransform = player.transform;        
         enemyTransform = transform;
-        playerController = player.GetComponent<PlayerController>();
         enemyAnimator = enemyTransform.GetComponent<Animator>();            
         enemyCollider = GetComponent<Collider>();
         laneController = GetComponent<LaneController>();
         characterController = GetComponent<CharacterController>();
         audioSource = GetComponent<AudioSource>();
         
-        CharacterController playerCharController = player.GetComponent<CharacterController>();
-        if (playerCharController != null)
+        ScheduleNextLaneChange();
+    }
+    
+    void Start()
+    {
+        // Encontra o player mais próximo através do PlayerManager
+        FindTargetPlayer();
+    }
+    
+    private void FindTargetPlayer()
+    {
+        if (PlayerManager.Instance == null)
         {
-            Physics.IgnoreCollision(characterController, playerCharController, true);
+            Debug.LogWarning("PlayerManager não encontrado! Certifique-se de ter um PlayerManager na cena.");
+            return;
         }
         
-        ScheduleNextLaneChange();
+        // Pega o player mais próximo
+        playerController = PlayerManager.Instance.GetClosestPlayer(transform.position);
+        
+        if (playerController != null)
+        {
+            playerTransform = playerController.transform;
+            
+            // Ignora colisão com o CharacterController do player
+            CharacterController playerCharController = playerController.GetComponent<CharacterController>();
+            if (playerCharController != null)
+            {
+                Physics.IgnoreCollision(characterController, playerCharController, true);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Nenhum player encontrado para o inimigo seguir!");
+        }
     }
 
     void Update()
     {
+        // Verifica se ainda tem referência ao player
+        if (playerController == null || playerTransform == null)
+        {
+            FindTargetPlayer(); // Tenta encontrar novamente
+            if (playerController == null) return; // Se ainda não tem, sai
+        }
+        
         if (isDead)
         {
             HandleDeadMovement();
