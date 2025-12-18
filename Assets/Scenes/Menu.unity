@@ -1619,7 +1619,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1349593445
 Transform:
   m_ObjectHideFlags: 0
@@ -1786,6 +1786,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1463257093}
   m_CullTransparentMesh: 1
+--- !u!1 &1466912679 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1853148659207843824, guid: 753d84635d26718478e3e704e0e64464,
+    type: 3}
+  m_PrefabInstance: {fileID: 7983730924844223059}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1503206442
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3799,6 +3805,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 0}
+    - targetCorrespondingSourceObject: {fileID: 1853148659207843824, guid: 753d84635d26718478e3e704e0e64464,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7983730924844223068}
   m_SourcePrefab: {fileID: 100100000, guid: 753d84635d26718478e3e704e0e64464, type: 3}
 --- !u!224 &7983730924844223060 stripped
 RectTransform:
@@ -3830,6 +3840,19 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 7983730924844223059}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7983730924844223068
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1466912679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afa583902562e7f46ba36b4557661fef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SimpleStoreManager
+  currencyText: {fileID: 1503206444}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
