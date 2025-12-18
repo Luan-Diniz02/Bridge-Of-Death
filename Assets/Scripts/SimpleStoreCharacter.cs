@@ -11,6 +11,7 @@ public class SimpleStoreCharacter : MonoBehaviour
     [SerializeField] private string characterID; // ID único (ex: "character_1")
     [SerializeField] private int price = 50;
     [SerializeField] private bool isDefault = false; // Personagem inicial gratuito
+    [SerializeField] private GameObject characterPrefab; // Prefab que será instanciado no jogo
     
     [Header("UI References")]
     [SerializeField] private Button actionButton; // Botão único para comprar/selecionar
@@ -25,6 +26,7 @@ public class SimpleStoreCharacter : MonoBehaviour
     public string CharacterID => characterID;
     public bool IsPurchased => isPurchased;
     public bool IsSelected => isSelected;
+    public GameObject CharacterPrefab => characterPrefab;
     
     private void Start()
     {
