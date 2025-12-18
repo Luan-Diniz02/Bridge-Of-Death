@@ -1,5 +1,6 @@
 using UnityEditor.Animations;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(LaneController))]
 [RequireComponent(typeof(CharacterController))]
@@ -27,6 +28,8 @@ public class EnemyController : MonoBehaviour
     [Header("Knockback Settings")]
     [SerializeField] private float knockbackForce = 10f; 
     [SerializeField] private float knockbackDrag = 2f;   
+    
+    [SerializeField] private UnityEvent onEnemyDeath;
     
     private Transform playerTransform;
     private Transform enemyTransform;
@@ -160,6 +163,7 @@ public class EnemyController : MonoBehaviour
         if (isDead) return; 
 
         isDead = true; 
+        onEnemyDeath?.Invoke();
         Debug.Log("Enemy killed by shield!");
         
         speedEnemy = 0f;

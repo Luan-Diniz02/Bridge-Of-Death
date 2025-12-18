@@ -17,4 +17,9 @@ public class CoinManager : MonoBehaviour
         coinCount += amount;
         coinsText.text = coinCount.ToString();
     }
+
+    public int GetTotalCoins()
+    {
+        return coinCount;
+    }
 }
