@@ -8,6 +8,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject settingsMenu;
     [SerializeField] private GameObject audioPanel, videoPanel, creditsPanel;
+    [SerializeField] private GameObject buttonAudioPressed, buttonVideoPressed, buttonCreditsPressed;
 
     private void Awake()
     {
@@ -18,7 +19,9 @@ public class MenuManager : MonoBehaviour
     {
         mainMenu.SetActive(false);
         settingsMenu.SetActive(true);
+        
         OpenPanel(audioPanel);
+        PressButton(buttonAudioPressed);
     }
 
     public void CloseSettings()
@@ -29,11 +32,30 @@ public class MenuManager : MonoBehaviour
 
     public void OpenPanel(GameObject panel)
     {
-        audioPanel.SetActive(false);
-        videoPanel.SetActive(false);
-        creditsPanel.SetActive(false);
+        TogglePanelsVisibility(false);
 
         panel.SetActive(true);
+    }
+
+    public void PressButton(GameObject button)
+    {
+        ToggleButtonsVisibility(false);
+
+        button.SetActive(true);
+    }
+
+    private void TogglePanelsVisibility(bool state)
+    {
+        audioPanel.SetActive(state);
+        videoPanel.SetActive(state);
+        creditsPanel.SetActive(state);
+    }
+
+    private void ToggleButtonsVisibility(bool state)
+    {
+        buttonAudioPressed.SetActive(state);
+        buttonVideoPressed.SetActive(state);
+        buttonCreditsPressed.SetActive(state);
     }
 
     public void LoadScene(string sceneName)
