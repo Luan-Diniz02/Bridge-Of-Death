@@ -50,6 +50,10 @@ public class LevelCompleted : MonoBehaviour
         enemiesDefeatedText.text = enemysDefeated.ToString();
         int totalCoins = coinsCollected + (remainingLives * 5) + (enemysDefeated * 10);
         totalCoinsText.text = totalCoins.ToString();
+        
+        // Adiciona as moedas ao total persistente do jogador
+        CurrencyManager.Instance.AddCurrency(totalCoins);
+        
         if(levelCompletedPanel != null) levelCompletedPanel.SetActive(true);
     }
 }
