@@ -2394,7 +2394,7 @@ GameObject:
   - component: {fileID: 273723808}
   - component: {fileID: 273723807}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Canvas_UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3957,7 +3957,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 2906801783144535173}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000509363}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0e1d316aae03a904e8b27328930877ba, type: 3}
   m_Name: 
@@ -6035,7 +6035,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1596448669
 Transform:
   m_ObjectHideFlags: 0
@@ -7435,6 +7435,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9117134734490032446, guid: 01164be779472854e891078a30269323,
         type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9117134734490032446, guid: 01164be779472854e891078a30269323,
+        type: 3}
       propertyPath: maxHealth
       value: 3
       objectReference: {fileID: 0}
@@ -7507,10 +7512,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 273723810}
     m_Modifications:
+    - target: {fileID: 308492375130172621, guid: 911a90562d05e464ab37d568f272e4c8,
+        type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 308492375130172621, guid: 911a90562d05e464ab37d568f272e4c8,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 308492375130172621, guid: 911a90562d05e464ab37d568f272e4c8,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 308492375130172621, guid: 911a90562d05e464ab37d568f272e4c8,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 140
+      objectReference: {fileID: 0}
+    - target: {fileID: 308492375130172621, guid: 911a90562d05e464ab37d568f272e4c8,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -160
+      objectReference: {fileID: 0}
     - target: {fileID: 738536204859431030, guid: 911a90562d05e464ab37d568f272e4c8,
         type: 3}
       propertyPath: m_Name
       value: Coin icon
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871785912374734904, guid: 911a90562d05e464ab37d568f272e4c8,
+        type: 3}
+      propertyPath: m_text
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3871785912374734904, guid: 911a90562d05e464ab37d568f272e4c8,
+        type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7626989064136931677, guid: 911a90562d05e464ab37d568f272e4c8,
         type: 3}

@@ -110,6 +110,7 @@ public class MenuManager : MonoBehaviour
     {
         mainMenu.SetActive(false);
         settingsMenu.SetActive(true);
+        CloseAllMenus();
 
         OpenPanel(audioPanel);
         PressButton(buttonAudioPressed);
@@ -119,6 +120,13 @@ public class MenuManager : MonoBehaviour
     {
         settingsMenu.SetActive(false);
         mainMenu.SetActive(true);
+    }
+
+    private void CloseAllMenus()
+    {
+        playMenu.SetActive(false);
+        exitMenu.SetActive(false);
+        storeMenu.SetActive(false);
     }
 
     public void OpenPanel(GameObject panel)
