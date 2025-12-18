@@ -6,6 +6,7 @@ using System.Linq;
 /// <summary>
 /// Gerencia todos os players na cena (spawn, referências, multiplayer)
 /// </summary>
+[DefaultExecutionOrder(-100)] // Executa antes dos outros scripts
 public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
@@ -37,6 +38,12 @@ public class PlayerManager : MonoBehaviour
         if (spawnOnStart)
         {
             SpawnPlayers();
+            
+            // Notifica CameraManager para atribuir câmeras
+            if (CameraManager.Instance != null)
+            {
+                CameraManager.Instance.AssignCamerasToPlayers();
+            }
         }
     }
     

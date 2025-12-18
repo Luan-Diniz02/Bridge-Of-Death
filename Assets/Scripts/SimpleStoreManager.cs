@@ -12,9 +12,10 @@ public class SimpleStoreManager : MonoBehaviour
     
     private SimpleStoreCharacter[] characters;
     private SimpleStoreCharacter selectedCharacter;
-    
+
     private void Start()
     {
+        //PlayerPrefs.DeleteAll(); // REMOVER APÓS TESTES
         // Encontra todos os personagens na loja
         characters = GetComponentsInChildren<SimpleStoreCharacter>(true);
         

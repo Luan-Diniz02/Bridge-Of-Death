@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4405783071949896629}
   m_Layer: 0
   m_Name: LookAt
-  m_TagString: Untagged
+  m_TagString: LookAt
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -96,6 +96,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: afce7758975db9e4bab6c8a31dbaf0ff,
         type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: afce7758975db9e4bab6c8a31dbaf0ff,
+        type: 3}
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
@@ -104,7 +109,7 @@ PrefabInstance:
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: afce7758975db9e4bab6c8a31dbaf0ff,
         type: 3}
-      insertIndex: -1
+      insertIndex: 0
       addedObject: {fileID: 4405783071949896629}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: afce7758975db9e4bab6c8a31dbaf0ff,

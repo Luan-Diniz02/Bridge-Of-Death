@@ -60,7 +60,7 @@ public class EnemyController : MonoBehaviour
     
     void Start()
     {
-        // Encontra o player mais próximo através do PlayerManager
+        // Tenta encontrar o player (pode não estar spawnado ainda)
         FindTargetPlayer();
     }
     
@@ -68,8 +68,7 @@ public class EnemyController : MonoBehaviour
     {
         if (PlayerManager.Instance == null)
         {
-            Debug.LogWarning("PlayerManager não encontrado! Certifique-se de ter um PlayerManager na cena.");
-            return;
+            return; // PlayerManager ainda não existe, vai tentar no Update
         }
         
         // Pega o player mais próximo
@@ -86,10 +85,7 @@ public class EnemyController : MonoBehaviour
                 Physics.IgnoreCollision(characterController, playerCharController, true);
             }
         }
-        else
-        {
-            Debug.LogWarning("Nenhum player encontrado para o inimigo seguir!");
-        }
+        // Não mostra warning aqui, vai tentar novamente no Update
     }
 
     void Update()

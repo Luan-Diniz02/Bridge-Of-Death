@@ -13,6 +13,17 @@ public class CameraController : MonoBehaviour
             mainCamera = Camera.main;
         }
     }
+    
+    /// <summary>
+    /// Permite injetar referências de câmera externamente (usado pelo CameraManager)
+    /// </summary>
+    public void SetCameras(CinemachineCamera vcam, CinemachineCamera deathCam, Camera cam)
+    {
+        virtualCamera = vcam;
+        deathCamera = deathCam;
+        mainCamera = cam;
+    }
+    
     public void ActivateDeathCamera()
     {
         if (virtualCamera != null && deathCamera != null)

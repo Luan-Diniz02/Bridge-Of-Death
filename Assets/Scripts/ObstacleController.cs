@@ -14,14 +14,11 @@ public class ObstacleController : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Player2"))
+        // Verifica se tem PlayerController (funciona com qualquer player)
+        PlayerController hitPlayer = other.GetComponent<PlayerController>();
+        if (hitPlayer != null)
         {
-            // Pega o PlayerController do objeto que colidiu
-            PlayerController hitPlayer = other.GetComponent<PlayerController>();
-            if (hitPlayer != null)
-            {
-                HideAndDestroyAfterSound(hitPlayer);
-            }
+            HideAndDestroyAfterSound(hitPlayer);
         }
     }
 
