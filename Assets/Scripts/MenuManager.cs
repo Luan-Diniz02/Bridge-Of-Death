@@ -14,6 +14,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject buttonAudioPressed, buttonVideoPressed, buttonCreditsPressed;
     [SerializeField] private GameObject playMenu, storeMenu, exitMenu;
     [SerializeField] private GameObject pauseButton;
+    [SerializeField] private GameObject UI_Gameplay;
     
     [Header("Settings Managers")]
     [SerializeField] private AudioSettingsManager audioSettings;
@@ -152,6 +153,7 @@ public class MenuManager : MonoBehaviour
     public void ShowPauseButton(bool state)
     {
         if(pauseButton != null) pauseButton.SetActive(state);
+        if(UI_Gameplay != null) UI_Gameplay.SetActive(state);
         Time.timeScale = state ? 1 : 0;
     }
 
