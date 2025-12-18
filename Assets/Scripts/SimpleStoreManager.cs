@@ -14,9 +14,7 @@ public class SimpleStoreManager : MonoBehaviour
     private SimpleStoreCharacter selectedCharacter;
 
     private void Start()
-    {
-        //PlayerPrefs.DeleteAll(); // REMOVER APÓS TESTES
-        
+    {        
         // Garante que CharacterSelection existe
         if (CharacterSelection.Instance == null)
         {
@@ -26,13 +24,22 @@ public class SimpleStoreManager : MonoBehaviour
         
         // Encontra todos os personagens na loja
         characters = GetComponentsInChildren<SimpleStoreCharacter>(true);
+        Debug.Log($"SimpleStoreManager.Start(): Encontrados {characters.Length} personagens na hierarquia de '{gameObject.name}'");
+        
+        // Se não encontrou, tenta buscar em toda a cena
+        if (characters.Length == 0)
+        {
+            Debug.LogWarning("Não encontrou personagens como filhos! Buscando em toda a cena...");
+            characters = FindObjectsByType<SimpleStoreCharacter>(FindObjectsSortMode.None);
+            Debug.Log($"Encontrados {characters.Length} personagens na cena");
+        }
         
         // Atualiza display de moedas
         UpdateCurrencyDisplay(CurrencyManager.Instance.GetCurrentCurrency());
         CurrencyManager.Instance.OnCurrencyChanged += UpdateCurrencyDisplay;
         
-        // Carrega personagem selecionado
-        LoadSelectedCharacter();
+        // Aguarda todos os SimpleStoreCharacter.Start() executarem primeiro
+        Invoke(nameof(LoadSelectedCharacter), 0.1f);
     }
     
     private void OnDestroy()
@@ -43,10 +50,24 @@ public class SimpleStoreManager : MonoBehaviour
     
     public void SelectCharacter(SimpleStoreCharacter character)
     {
-        // Desmarca todos
+        // Se o array estiver vazio, recarrega
+        if (characters == null || characters.Length == 0)
+        {
+            Debug.LogWarning("Array de personagens estava vazio! Recarregando...");
+            characters = GetComponentsInChildren<SimpleStoreCharacter>(true);
+            if (characters.Length == 0)
+            {
+                characters = FindObjectsByType<SimpleStoreCharacter>(FindObjectsSortMode.None);
+            }
+        }
+        
+        // Desmarca todos PRIMEIRO
         foreach (var c in characters)
         {
-            c.SetSelected(false);
+            if (c != character)
+            {
+                c.SetSelected(false);
+            }
         }
         
         // Marca o selecionado
@@ -62,7 +83,8 @@ public class SimpleStoreManager : MonoBehaviour
             );
         }
         
-        Debug.Log($"Personagem {character.CharacterID} selecionado!");
+        // Força refresh de todos para garantir
+        RefreshAllCharactersUI();
     }
     
     public SimpleStoreCharacter GetSelectedCharacter()
@@ -77,6 +99,12 @@ public class SimpleStoreManager : MonoBehaviour
     
     private void LoadSelectedCharacter()
     {
+        // IMPORTANTE: Desmarca todos primeiro para evitar múltiplas seleções
+        foreach (var c in characters)
+        {
+            c.SetSelected(false);
+        }
+        
         string savedID = PlayerPrefs.GetString("SelectedCharacter", "");
         
         if (!string.IsNullOrEmpty(savedID))
@@ -84,17 +112,26 @@ public class SimpleStoreManager : MonoBehaviour
             var character = characters.FirstOrDefault(c => c.CharacterID == savedID);
             if (character != null && character.IsPurchased)
             {
-                SelectCharacter(character); // Usa SelectCharacter para salvar globalmente
+                Debug.Log($"Encontrado personagem salvo: {savedID}");
+                SelectCharacter(character);
+                
+                // Reconstrói a referência do prefab no CharacterSelection
+                if (CharacterSelection.Instance != null)
+                {
+                    CharacterSelection.Instance.RebuildPrefabReference(character.CharacterPrefab);
+                }
+                
                 RefreshAllCharactersUI();
                 return;
             }
         }
         
-        // Se não houver seleção salva, seleciona o personagem padrão (IsDefault = true)
+        // Se não houver seleção salva, seleciona APENAS O PRIMEIRO personagem padrão encontrado
         var defaultCharacter = characters.FirstOrDefault(c => c.IsDefault && c.IsPurchased);
         if (defaultCharacter != null)
         {
-            SelectCharacter(defaultCharacter); // Usa SelectCharacter para salvar globalmente
+            Debug.Log($"Selecionando personagem padrão: {defaultCharacter.CharacterID}");
+            SelectCharacter(defaultCharacter);
             RefreshAllCharactersUI();
             return;
         }
@@ -103,7 +140,8 @@ public class SimpleStoreManager : MonoBehaviour
         var firstPurchased = characters.FirstOrDefault(c => c.IsPurchased);
         if (firstPurchased != null)
         {
-            SelectCharacter(firstPurchased); // Usa SelectCharacter para salvar globalmente
+            Debug.Log($"Selecionando primeiro personagem comprado: {firstPurchased.CharacterID}");
+            SelectCharacter(firstPurchased);
             RefreshAllCharactersUI();
         }
     }

@@ -107,13 +107,28 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     private GameObject GetPlayerPrefab(int playerIndex)
     {
+        // Player 2 em Split Screen - usa seleção separada
+        if (playerIndex == 1 && CharacterSelection.Instance != null)
+        {
+            if (CharacterSelection.Instance.HasPlayer2Selection())
+            {
+                GameObject player2Prefab = CharacterSelection.Instance.GetPlayer2CharacterPrefab();
+                if (player2Prefab != null)
+                {
+                    Debug.Log($"Player 2: Usando personagem do CharacterSelection: {CharacterSelection.Instance.GetPlayer2CharacterID()}");
+                    return player2Prefab;
+                }
+            }
+        }
+        
+        // Player 1 (ou Player 2 sem seleção específica)
         // Prioridade 1: CharacterSelection (persistente entre cenas)
         if (CharacterSelection.Instance != null && CharacterSelection.Instance.HasSelection())
         {
             GameObject prefab = CharacterSelection.Instance.GetSelectedCharacterPrefab();
             if (prefab != null)
             {
-                Debug.Log($"Usando personagem do CharacterSelection: {CharacterSelection.Instance.GetSelectedCharacterID()}");
+                Debug.Log($"Player {playerIndex + 1}: Usando personagem do CharacterSelection: {CharacterSelection.Instance.GetSelectedCharacterID()}");
                 return prefab;
             }
         }
@@ -125,13 +140,13 @@ public class PlayerManager : MonoBehaviour
             SimpleStoreCharacter selectedCharacter = storeManager.GetSelectedCharacter();
             if (selectedCharacter != null && selectedCharacter.CharacterPrefab != null)
             {
-                Debug.Log($"Usando personagem da loja: {selectedCharacter.CharacterID}");
+                Debug.Log($"Player {playerIndex + 1}: Usando personagem da loja: {selectedCharacter.CharacterID}");
                 return selectedCharacter.CharacterPrefab;
             }
         }
         
         // Fallback para prefab padrão
-        Debug.Log("Usando prefab padrão");
+        Debug.Log($"Player {playerIndex + 1}: Usando prefab padrão");
         return defaultPlayerPrefab;
     }
     

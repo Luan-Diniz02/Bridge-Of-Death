@@ -44,6 +44,8 @@ public class CurrencyManager : MonoBehaviour
     {
         if (instance == this)
         {
+            // Limpa todos os listeners de eventos antes de destruir
+            OnCurrencyChanged = null;
             instance = null;
         }
     }

@@ -3262,7 +3262,7 @@ MonoBehaviour:
   effectValue: 1
   uiElement: {fileID: 0}
   infoText: {fileID: 0}
-  collectSound: {fileID: 0}
+  collectSound: {fileID: 8300000, guid: a262d7b53b2bc11439ae8d1d79bad8eb, type: 3}
   onCollect:
     m_PersistentCalls:
       m_Calls: []

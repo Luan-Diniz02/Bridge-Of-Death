@@ -92,6 +92,7 @@ public class SimpleStoreCharacter : MonoBehaviour
             SaveSelection();
         }
         
+        // Sempre atualiza a UI quando o estado de seleção muda
         UpdateUI();
     }
     
@@ -158,6 +159,10 @@ public class SimpleStoreCharacter : MonoBehaviour
         // Carrega se foi comprado
         string purchaseKey = $"Character_Purchased_{characterID}";
         isPurchased = PlayerPrefs.GetInt(purchaseKey, isDefault ? 1 : 0) == 1;
+        
+        // Carrega se está selecionado
+        string selectedID = PlayerPrefs.GetString("SelectedCharacter", "");
+        isSelected = (selectedID == characterID);
     }
     
     private void SaveState()

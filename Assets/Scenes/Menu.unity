@@ -484,7 +484,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SimpleStoreCharacter
   characterID: character_frank
   price: 100
-  isDefault: 1
+  isDefault: 0
   characterPrefab: {fileID: 6573220326789047055, guid: fdba08bea61edab49a46ddef9cd960b5,
     type: 3}
   actionButton: {fileID: 1280062592}
@@ -2208,7 +2208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SimpleStoreCharacter
   characterID: character_luan
   price: 100
-  isDefault: 0
+  isDefault: 1
   characterPrefab: {fileID: 6382280520658541037, guid: 01164be779472854e891078a30269323,
     type: 3}
   actionButton: {fileID: 1959498580}
