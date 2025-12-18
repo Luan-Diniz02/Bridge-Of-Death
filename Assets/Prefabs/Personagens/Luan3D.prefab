@@ -282,7 +282,7 @@ MonoBehaviour:
   jumpForce: 5
   gravity: 10
   allowMovement: 1
-  maxHealth: 5
+  maxHealth: 3
   currentHealth: 0
   dead: 0
   invincibilityDuration: 1.5
