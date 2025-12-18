@@ -76,6 +76,18 @@ public class MenuManager : MonoBehaviour
         buttonCreditsPressed.SetActive(state);
     }
 
+    public void ExitGame()
+    {
+        if(Application.isEditor)
+        {
+            UnityEditor.EditorApplication.isPlaying = false;
+        }
+        else
+        {
+            Application.Quit();
+        }
+    }
+
     public void LoadScene(string sceneName)
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
