@@ -15,8 +15,16 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private Transform[] spawnPoints; // Pontos de spawn para cada player
     [SerializeField] private bool spawnOnStart = true;
     
-    [Header("Player Prefabs (Fallback)")]
+    [Header("Player Prefabs")]
     [SerializeField] private GameObject defaultPlayerPrefab; // Prefab padrão se não houver loja
+    [SerializeField] private CharacterPrefabMapping[] characterPrefabs; // Mapeamento ID → Prefab
+    
+    [System.Serializable]
+    public class CharacterPrefabMapping
+    {
+        public string characterID;
+        public GameObject prefab;
+    }
     
     private List<GameObject> playerGameObjects = new List<GameObject>();
     private List<PlayerController> playerControllers = new List<PlayerController>();
@@ -35,6 +43,13 @@ public class PlayerManager : MonoBehaviour
     
     void Start()
     {
+        // Garante que CharacterSelection existe
+        if (CharacterSelection.Instance == null)
+        {
+            GameObject selectionObj = new GameObject("CharacterSelection");
+            selectionObj.AddComponent<CharacterSelection>();
+        }
+        
         if (spawnOnStart)
         {
             SpawnPlayers();
@@ -110,26 +125,58 @@ public class PlayerManager : MonoBehaviour
         // Player 2 em Split Screen - usa seleção separada
         if (playerIndex == 1 && CharacterSelection.Instance != null)
         {
-            if (CharacterSelection.Instance.HasPlayer2Selection())
+            string player2ID = CharacterSelection.Instance.GetPlayer2CharacterID();
+            
+            if (!string.IsNullOrEmpty(player2ID))
             {
+                // Tenta buscar prefab do CharacterSelection
                 GameObject player2Prefab = CharacterSelection.Instance.GetPlayer2CharacterPrefab();
+                
+                // Se não tem prefab, tenta reconstruir do mapeamento
+                if (player2Prefab == null)
+                {
+                    player2Prefab = GetPrefabByID(player2ID);
+                    if (player2Prefab != null)
+                    {
+                        CharacterSelection.Instance.RebuildPlayer2PrefabReference(player2Prefab);
+                    }
+                }
+                
                 if (player2Prefab != null)
                 {
-                    Debug.Log($"Player 2: Usando personagem do CharacterSelection: {CharacterSelection.Instance.GetPlayer2CharacterID()}");
+                    Debug.Log($"Player 2: Usando personagem {player2ID}");
                     return player2Prefab;
                 }
             }
         }
         
         // Player 1 (ou Player 2 sem seleção específica)
-        // Prioridade 1: CharacterSelection (persistente entre cenas)
-        if (CharacterSelection.Instance != null && CharacterSelection.Instance.HasSelection())
+        // Prioridade 1: CharacterSelection com ID salvo
+        if (CharacterSelection.Instance != null)
         {
-            GameObject prefab = CharacterSelection.Instance.GetSelectedCharacterPrefab();
-            if (prefab != null)
+            string selectedID = CharacterSelection.Instance.GetSelectedCharacterID();
+            
+            if (!string.IsNullOrEmpty(selectedID))
             {
-                Debug.Log($"Player {playerIndex + 1}: Usando personagem do CharacterSelection: {CharacterSelection.Instance.GetSelectedCharacterID()}");
-                return prefab;
+                // Tenta buscar prefab do CharacterSelection
+                GameObject prefab = CharacterSelection.Instance.GetSelectedCharacterPrefab();
+                
+                // Se não tem prefab, tenta reconstruir do mapeamento
+                if (prefab == null)
+                {
+                    prefab = GetPrefabByID(selectedID);
+                    
+                    if (prefab != null)
+                    {
+                        CharacterSelection.Instance.RebuildPrefabReference(prefab);
+                    }
+                }
+                
+                if (prefab != null)
+                {
+                    Debug.Log($"Player {playerIndex + 1}: Usando personagem {selectedID}");
+                    return prefab;
+                }
             }
         }
         
@@ -148,6 +195,29 @@ public class PlayerManager : MonoBehaviour
         // Fallback para prefab padrão
         Debug.Log($"Player {playerIndex + 1}: Usando prefab padrão");
         return defaultPlayerPrefab;
+    }
+    
+    /// <summary>
+    /// Busca um prefab pelo ID no mapeamento
+    /// </summary>
+    private GameObject GetPrefabByID(string characterID)
+    {
+        if (characterPrefabs == null || characterPrefabs.Length == 0)
+        {
+            Debug.LogWarning("PlayerManager: Lista de characterPrefabs está vazia! Configure no Inspector.");
+            return null;
+        }
+        
+        foreach (var mapping in characterPrefabs)
+        {
+            if (mapping.characterID == characterID && mapping.prefab != null)
+            {
+                return mapping.prefab;
+            }
+        }
+        
+        Debug.LogWarning($"PlayerManager: Prefab não encontrado para ID '{characterID}'");
+        return null;
     }
     
     /// <summary>

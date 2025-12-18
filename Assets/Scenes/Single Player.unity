@@ -4281,6 +4281,16 @@ MonoBehaviour:
   spawnOnStart: 1
   defaultPlayerPrefab: {fileID: 6382280520658541037, guid: 01164be779472854e891078a30269323,
     type: 3}
+  characterPrefabs:
+  - characterID: character_luan
+    prefab: {fileID: 6382280520658541037, guid: 01164be779472854e891078a30269323,
+      type: 3}
+  - characterID: character_frank
+    prefab: {fileID: 6573220326789047055, guid: fdba08bea61edab49a46ddef9cd960b5,
+      type: 3}
+  - characterID: character_saulo
+    prefab: {fileID: 9004593619112199787, guid: cb4a26a3815ea744099e4a25b4e2ae5c,
+      type: 3}
 --- !u!114 &728827625 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5247530822350994254, guid: 753d84635d26718478e3e704e0e64464,
