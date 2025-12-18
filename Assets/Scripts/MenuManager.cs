@@ -13,6 +13,7 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject audioPanel, videoPanel, creditsPanel;
     [SerializeField] private GameObject buttonAudioPressed, buttonVideoPressed, buttonCreditsPressed;
     [SerializeField] private GameObject playMenu, storeMenu, exitMenu;
+    [SerializeField] private GameObject pauseButton;
     
     [Header("Settings Managers")]
     [SerializeField] private AudioSettingsManager audioSettings;
@@ -82,34 +83,34 @@ public class MenuManager : MonoBehaviour
 
     public void OpenPlayMenu()
     {
-        playMenu.SetActive(true);
-        exitMenu.SetActive(false);
-        storeMenu.SetActive(false);
+        if(playMenu != null) playMenu.SetActive(true);
+        if(exitMenu != null) exitMenu.SetActive(false);
+        if(storeMenu != null) storeMenu.SetActive(false);
     }
 
     public void OpenExitMenu()
     {
-        exitMenu.SetActive(true);
-        playMenu.SetActive(false);
-        storeMenu.SetActive(false);
+        if(exitMenu != null) exitMenu.SetActive(true);
+        if(playMenu != null) playMenu.SetActive(false);
+        if(storeMenu != null) storeMenu.SetActive(false);
     }
 
     public void OpenStoreMenu()
     {
-        storeMenu.SetActive(true);
-        playMenu.SetActive(false);
-        exitMenu.SetActive(false);
+        if(storeMenu != null) storeMenu.SetActive(true);
+        if(playMenu != null) playMenu.SetActive(false);
+        if(exitMenu != null) exitMenu.SetActive(false);
     }
 
     public void CloseExitMenu()
     {
-        exitMenu.SetActive(false);
+        if(exitMenu != null) exitMenu.SetActive(false);
     }
 
     public void OpenSettings()
     {
-        mainMenu.SetActive(false);
-        settingsMenu.SetActive(true);
+        if(mainMenu != null) mainMenu.SetActive(false);
+        if(settingsMenu != null) settingsMenu.SetActive(true);
         CloseAllMenus();
 
         OpenPanel(audioPanel);
@@ -118,43 +119,54 @@ public class MenuManager : MonoBehaviour
 
     public void CloseSettings()
     {
-        settingsMenu.SetActive(false);
-        mainMenu.SetActive(true);
+        if(settingsMenu != null) settingsMenu.SetActive(false);
+        if(mainMenu != null) mainMenu.SetActive(true);
     }
 
     private void CloseAllMenus()
     {
-        playMenu.SetActive(false);
-        exitMenu.SetActive(false);
-        storeMenu.SetActive(false);
+        if(playMenu != null) playMenu.SetActive(false);
+        if(exitMenu != null) exitMenu.SetActive(false);
+        if(storeMenu != null) storeMenu.SetActive(false);
     }
 
     public void OpenPanel(GameObject panel)
     {
         TogglePanelsVisibility(false);
 
-        panel.SetActive(true);
+        if(panel != null) panel.SetActive(true);
+    }
+
+    public void ClosePanel(GameObject panel)
+    {
+        if(panel != null) panel.SetActive(false);
     }
 
     public void PressButton(GameObject button)
     {
         ToggleButtonsVisibility(false);
 
-        button.SetActive(true);
+        if(button != null) button.SetActive(true);
+    }
+
+    public void ShowPauseButton(bool state)
+    {
+        if(pauseButton != null) pauseButton.SetActive(state);
+        Time.timeScale = state ? 1 : 0;
     }
 
     private void TogglePanelsVisibility(bool state)
     {
-        audioPanel.SetActive(state);
-        videoPanel.SetActive(state);
-        creditsPanel.SetActive(state);
+        if(audioPanel != null) audioPanel.SetActive(state);
+        if(videoPanel != null) videoPanel.SetActive(state);
+        if(creditsPanel != null) creditsPanel.SetActive(state);
     }
 
     private void ToggleButtonsVisibility(bool state)
     {
-        buttonAudioPressed.SetActive(state);
-        buttonVideoPressed.SetActive(state);
-        buttonCreditsPressed.SetActive(state);
+        if(buttonAudioPressed != null) buttonAudioPressed.SetActive(state);
+        if(buttonVideoPressed != null) buttonVideoPressed.SetActive(state);
+        if(buttonCreditsPressed != null) buttonCreditsPressed.SetActive(state);
     }
 
     public void ExitGame()
@@ -172,5 +184,6 @@ public class MenuManager : MonoBehaviour
     public void LoadScene(string sceneName)
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
+        Time.timeScale = 1;
     }
 }
