@@ -1,10 +1,10 @@
-using Unity.AppUI.UI;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Audio;
-using UnityEngine.UI;
-using TMPro;
 
+/// <summary>
+/// Single Responsibility: Gerencia apenas a navegação entre menus
+/// Dependency Inversion: Depende de abstrações (ISettingsManager) não de implementações concretas
+/// Open/Closed: Aberto para extensão (novos gerenciadores) fechado para modificação
+/// </summary>
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] private int targetFrameRate = 60;
@@ -14,86 +14,70 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject buttonAudioPressed, buttonVideoPressed, buttonCreditsPressed;
     [SerializeField] private GameObject playMenu, exitMenu;
     
-    [Header("Audio Settings")]
-    [SerializeField] private AudioMixer audioMixer;
-    [SerializeField] private Slider audioVolumeSlider;
-    [SerializeField] private Slider musicVolumeSlider;
+    [Header("Settings Managers")]
+    [SerializeField] private AudioSettingsManager audioSettings;
+    [SerializeField] private VideoSettingsManager videoSettings;
     
-    [Header("Video Settings")]
-    [SerializeField] private UnityEngine.UI.Button fullscreenButton;
-    [SerializeField] private UnityEngine.UI.Button fpsButton;
-    [SerializeField] private TMP_Dropdown resolutionDropdown;
-    [SerializeField] private TextMeshProUGUI fullscreenButtonText;
-    [SerializeField] private TextMeshProUGUI fpsButtonText;
-    [SerializeField] private TextMeshProUGUI fpsText;
-    
-    private Resolution[] resolutions;
-    private bool isFullscreen = true;
-    private bool showFPS = false;
-    private float deltaTime = 0.0f;
+    private SettingsDataManager dataManager;
 
     private void Awake()
     {
         Application.targetFrameRate = targetFrameRate;
-        InitializeSettings();
+        InitializeManagers();
     }
     
     private void Start()
     {
-        LoadSettings();
+        LoadAllSettings();
     }
     
     private void Update()
     {
-        if (showFPS)
+        // Delega atualização de FPS ao gerenciador apropriado
+        if (videoSettings != null)
         {
-            UpdateFPSDisplay();
+            videoSettings.UpdateFPSDisplay();
         }
     }
     
-    private void InitializeSettings()
+    private void InitializeManagers()
     {
-        // Inicializa resoluções disponíveis
-        resolutions = Screen.resolutions;
-        if (resolutionDropdown != null)
+        // Cria instância do gerenciador de dados
+        dataManager = new SettingsDataManager();
+        
+        // Injeta dependência nos gerenciadores (Dependency Injection)
+        if (audioSettings != null)
         {
-            resolutionDropdown.ClearOptions();
-            
-            System.Collections.Generic.List<string> options = new System.Collections.Generic.List<string>();
-            int currentResolutionIndex = 0;
-            
-            for (int i = 0; i < resolutions.Length; i++)
-            {
-                string option = resolutions[i].width + " x " + resolutions[i].height;
-                options.Add(option);
-                
-                if (resolutions[i].width == Screen.currentResolution.width &&
-                    resolutions[i].height == Screen.currentResolution.height)
-                {
-                    currentResolutionIndex = i;
-                }
-            }
-            
-            resolutionDropdown.AddOptions(options);
-            resolutionDropdown.value = currentResolutionIndex;
-            resolutionDropdown.RefreshShownValue();
+            audioSettings.SetDataManager(dataManager);
+            audioSettings.Initialize();
         }
         
-        // Configura listeners
-        if (audioVolumeSlider != null)
-            audioVolumeSlider.onValueChanged.AddListener(SetAudioVolume);
+        if (videoSettings != null)
+        {
+            videoSettings.SetDataManager(dataManager);
+            videoSettings.Initialize();
+        }
+    }
+    
+    private void LoadAllSettings()
+    {
+        if (audioSettings != null)
+            audioSettings.LoadSettings();
             
-        if (musicVolumeSlider != null)
-            musicVolumeSlider.onValueChanged.AddListener(SetMusicVolume);
+        if (videoSettings != null)
+            videoSettings.LoadSettings();
+    }
+    
+    public void SaveAllSettings()
+    {
+        if (audioSettings != null)
+            audioSettings.SaveSettings();
             
-        if (fullscreenButton != null)
-            fullscreenButton.onClick.AddListener(ToggleFullscreen);
+        if (videoSettings != null)
+            videoSettings.SaveSettings();
             
-        if (resolutionDropdown != null)
-            resolutionDropdown.onValueChanged.AddListener(SetResolution);
-            
-        if (fpsButton != null)
-            fpsButton.onClick.AddListener(ToggleFPS);
+        if (dataManager != null)
+            dataManager.Save();
     }
 
     public void OpenPlayMenu()
@@ -172,133 +156,4 @@ public class MenuManager : MonoBehaviour
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName);
     }
-    
-    // ========== MÉTODOS DE ÁUDIO ==========
-    
-    public void SetAudioVolume(float volume)
-    {
-        if (audioMixer != null)
-        {
-            // Converte de 0-1 para -80dB a 0dB
-            float dB = volume > 0 ? 20f * Mathf.Log10(volume) : -80f;
-            audioMixer.SetFloat("AudioVolume", dB);
-            PlayerPrefs.SetFloat("AudioVolume", volume);
-        }
-    }
-    
-    public void SetMusicVolume(float volume)
-    {
-        if (audioMixer != null)
-        {
-            // Converte de 0-1 para -80dB a 0dB
-            float dB = volume > 0 ? 20f * Mathf.Log10(volume) : -80f;
-            audioMixer.SetFloat("MusicVolume", dB);
-            PlayerPrefs.SetFloat("MusicVolume", volume);
-        }
-    }
-    
-    // ========== MÉTODOS DE VÍDEO ==========
-    
-    public void ToggleFullscreen()
-    {
-        isFullscreen = !isFullscreen;
-        Screen.fullScreen = isFullscreen;
-        UpdateFullscreenButtonText();
-        PlayerPrefs.SetInt("Fullscreen", isFullscreen ? 1 : 0);
-    }
-    
-    private void UpdateFullscreenButtonText()
-    {
-        if (fullscreenButtonText != null)
-        {
-            fullscreenButtonText.text = isFullscreen ? "on" : "off";
-        }
-    }
-    
-    public void SetResolution(int resolutionIndex)
-    {
-        if (resolutionIndex >= 0 && resolutionIndex < resolutions.Length)
-        {
-            Resolution resolution = resolutions[resolutionIndex];
-            Screen.SetResolution(resolution.width, resolution.height, isFullscreen);
-            PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
-        }
-    }
-    
-    public void ToggleFPS()
-    {
-        showFPS = !showFPS;
-        if (fpsText != null)
-        {
-            fpsText.gameObject.SetActive(showFPS);
-        }
-        UpdateFPSButtonText();
-        PlayerPrefs.SetInt("ShowFPS", showFPS ? 1 : 0);
-    }
-    
-    private void UpdateFPSButtonText()
-    {
-        if (fpsButtonText != null)
-        {
-            fpsButtonText.text = showFPS ? "on" : "off";
-        }
-    }
-    
-    private void UpdateFPSDisplay()
-    {
-        if (fpsText != null)
-        {
-            deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
-            float fps = 1.0f / deltaTime;
-            fpsText.text = Mathf.Ceil(fps).ToString() + " FPS";
-        }
-    }
-    
-    // ========== CARREGAR/SALVAR CONFIGURAÇÕES ==========
-    
-    private void LoadSettings()
-    {
-        // Carrega volume de áudio
-        if (audioVolumeSlider != null)
-        {
-            float audioVolume = PlayerPrefs.GetFloat("AudioVolume", 1f);
-            audioVolumeSlider.value = audioVolume;
-            SetAudioVolume(audioVolume);
-        }
-        
-        // Carrega volume de música
-        if (musicVolumeSlider != null)
-        {
-            float musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
-            musicVolumeSlider.value = musicVolume;
-            SetMusicVolume(musicVolume);
-        }
-        
-        // Carrega fullscreen
-        isFullscreen = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
-        Screen.fullScreen = isFullscreen;
-        UpdateFullscreenButtonText();
-        
-        // Carrega resolução
-        if (resolutionDropdown != null)
-        {
-            int resolutionIndex = PlayerPrefs.GetInt("ResolutionIndex", resolutions.Length - 1);
-            resolutionDropdown.value = resolutionIndex;
-            SetResolution(resolutionIndex);
-        }
-        
-        // Carrega FPS
-        showFPS = PlayerPrefs.GetInt("ShowFPS", 0) == 1;
-        if (fpsText != null)
-        {
-            fpsText.gameObject.SetActive(showFPS);
-        }
-        UpdateFPSButtonText();
-    }
-    
-    public void SaveSettings()
-    {
-        PlayerPrefs.Save();
-    }
-
 }
