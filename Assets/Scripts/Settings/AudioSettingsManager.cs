@@ -15,6 +15,7 @@ public class AudioSettingsManager : MonoBehaviour, ISettingsManager
     private SettingsDataManager dataManager;
     private const string AUDIO_PARAM = "AudioVolume";
     private const string MUSIC_PARAM = "MusicVolume";
+    private float originalAudioVolume;
     
     public void SetDataManager(SettingsDataManager manager)
     {
@@ -28,6 +29,12 @@ public class AudioSettingsManager : MonoBehaviour, ISettingsManager
             
         if (musicVolumeSlider != null)
             musicVolumeSlider.onValueChanged.AddListener(SetMusicVolume);
+        
+        // Salva o volume original de AudioVolume
+        if (audioMixer != null)
+        {
+            audioMixer.GetFloat(AUDIO_PARAM, out originalAudioVolume);
+        }
     }
     
     public void LoadSettings()
@@ -82,5 +89,27 @@ public class AudioSettingsManager : MonoBehaviour, ISettingsManager
         
         if (dataManager != null)
             dataManager.SetMusicVolume(volume);
+    }
+    
+    /// <summary>
+    /// Silencia todos os sons do grupo AudioVolume (usado no menu)
+    /// </summary>
+    public void MuteGameplaySounds()
+    {
+        if (audioMixer != null)
+        {
+            audioMixer.SetFloat(AUDIO_PARAM, -80f);
+        }
+    }
+    
+    /// <summary>
+    /// Restaura o volume original dos sons de gameplay
+    /// </summary>
+    public void UnmuteGameplaySounds()
+    {
+        if (audioMixer != null)
+        {
+            audioMixer.SetFloat(AUDIO_PARAM, originalAudioVolume);
+        }
     }
 }

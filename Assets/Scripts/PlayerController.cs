@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using UnityEngine.Playables;
 using System;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Animator))]
@@ -41,6 +42,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float invincibilityDuration = 1.5f;
     [SerializeField] private bool isInvincible = false;
     private bool shieldActive = false;
+
+    public UnityEvent onPlayerDeath;
 
     private float verticalVelocity;
     private Vector3 forwardVelocity;
@@ -189,6 +192,7 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Dead");
             DisableInput();
             cameraController.ActivateDeathCamera();
+            if (onPlayerDeath != null) StartCoroutine(onPlayerDeathCoroutine());
         }
         else
         {
@@ -196,6 +200,13 @@ public class PlayerController : MonoBehaviour
         }
         StartCoroutine(InvincibilityCoroutine());
     }
+
+    private IEnumerator onPlayerDeathCoroutine()
+    {
+        yield return new WaitForSeconds(3f);
+        if (onPlayerDeath != null) onPlayerDeath.Invoke();
+    }
+    
 
     public void HealPlayer(int amount)
     {
@@ -226,6 +237,8 @@ public class PlayerController : MonoBehaviour
         }
         speed = targetSpeed;
     }
+
+    
 
     public void DisableInput() {
         if (playerInput != null) playerInput.DeactivateInput();

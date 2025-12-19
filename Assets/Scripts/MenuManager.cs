@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 /// <summary>
 /// Single Responsibility: Gerencia apenas a navegação entre menus
@@ -15,6 +16,8 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject playMenu, storeMenu, exitMenu;
     [SerializeField] private GameObject pauseButton;
     [SerializeField] private GameObject UI_Gameplay;
+    [SerializeField] private AudioSource audioSourceBackground;
+    [SerializeField] private AudioClip audioClipMenu, audioClipGameplay;
     
     [Header("Settings Managers")]
     [SerializeField] private AudioSettingsManager audioSettings;
@@ -180,6 +183,36 @@ public class MenuManager : MonoBehaviour
         else
         {
             Application.Quit();
+        }
+    }
+
+    public void PlayMenuMusic()
+    {
+        if(audioSourceBackground != null && audioClipMenu != null)
+        {
+            audioSourceBackground.clip = audioClipMenu;
+            audioSourceBackground.Play();
+        }
+        
+        // Delega ao AudioSettingsManager
+        if (audioSettings != null)
+        {
+            audioSettings.MuteGameplaySounds();
+        }
+    }
+
+    public void PlayGameplayMusic()
+    {
+        if(audioSourceBackground != null && audioClipGameplay != null)
+        {
+            audioSourceBackground.clip = audioClipGameplay;
+            audioSourceBackground.Play();
+        }
+        
+        // Delega ao AudioSettingsManager
+        if (audioSettings != null)
+        {
+            audioSettings.UnmuteGameplaySounds();
         }
     }
 

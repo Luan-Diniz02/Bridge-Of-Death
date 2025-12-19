@@ -4,7 +4,7 @@ using UnityEngine;
 public class LevelCompleted : MonoBehaviour
 {
     [SerializeField] private CoinManager coinManager;
-    [SerializeField] private TextMeshProUGUI coinsCollectedText, livesRemainingText, enemiesDefeatedText, totalCoinsText;
+    [SerializeField] private TextMeshProUGUI coinsCollectedText, livesRemainingText, enemiesDefeatedText, totalCoinsText, titleText;
     [SerializeField] private GameObject levelCompletedPanel;
     [SerializeField] private GameObject [] OtherUI;
     private int coinsCollected;
@@ -14,6 +14,30 @@ public class LevelCompleted : MonoBehaviour
     void Awake()
     {
         if(levelCompletedPanel != null) levelCompletedPanel.SetActive(false);
+    }
+
+    void Start()
+    {
+        // Inscreve-se no evento de morte do player
+        if (PlayerController.Instance != null)
+        {
+            PlayerController.Instance.GetComponent<PlayerController>().onPlayerDeath.AddListener(OnPlayerDeath);
+        }
+    }
+
+    void OnDestroy()
+    {
+        // Remove a inscrição ao destruir o objeto
+        if (PlayerController.Instance != null)
+        {
+            PlayerController.Instance.GetComponent<PlayerController>().onPlayerDeath.RemoveListener(OnPlayerDeath);
+        }
+    }
+
+    private void OnPlayerDeath()
+    {
+        Debug.Log("LevelCompleted notificado: Player morreu!");
+        DisplayLevelFailed();
     }
 
     public void IncrementEnemiesDefeated(int count)
@@ -55,5 +79,11 @@ public class LevelCompleted : MonoBehaviour
         CurrencyManager.Instance.AddCurrency(totalCoins);
         
         if(levelCompletedPanel != null) levelCompletedPanel.SetActive(true);
+    }
+
+    public void DisplayLevelFailed()
+    {
+        if(titleText != null) titleText.text = "YOU DIED";
+        DisplayLevelCompletionStats();
     }
 }
