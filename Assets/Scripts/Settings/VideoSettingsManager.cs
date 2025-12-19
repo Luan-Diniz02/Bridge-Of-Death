@@ -92,19 +92,44 @@ public class VideoSettingsManager : MonoBehaviour, ISettingsManager
         resolutionDropdown.ClearOptions();
         
         List<string> options = new List<string>();
+        Dictionary<string, Resolution> uniqueResolutions = new Dictionary<string, Resolution>();
         int currentResolutionIndex = 0;
         
+        // Filtrar resoluções duplicadas, mantendo a maior taxa de atualização para cada dimensão
         for (int i = 0; i < resolutions.Length; i++)
         {
-            string option = resolutions[i].width + " x " + resolutions[i].height;
+            string key = resolutions[i].width + "x" + resolutions[i].height;
+            
+            // Se não existe ou tem refresh rate maior, atualizar
+            if (!uniqueResolutions.ContainsKey(key) || 
+                resolutions[i].refreshRate > uniqueResolutions[key].refreshRate)
+            {
+                uniqueResolutions[key] = resolutions[i];
+            }
+        }
+        
+        // Converter para lista ordenada
+        List<Resolution> sortedResolutions = new List<Resolution>(uniqueResolutions.Values);
+        sortedResolutions.Sort((a, b) => {
+            if (a.width != b.width) return a.width.CompareTo(b.width);
+            return a.height.CompareTo(b.height);
+        });
+        
+        // Criar opções e encontrar índice da resolução atual
+        for (int i = 0; i < sortedResolutions.Count; i++)
+        {
+            string option = sortedResolutions[i].width + " x " + sortedResolutions[i].height;
             options.Add(option);
             
-            if (resolutions[i].width == Screen.currentResolution.width &&
-                resolutions[i].height == Screen.currentResolution.height)
+            if (sortedResolutions[i].width == Screen.currentResolution.width &&
+                sortedResolutions[i].height == Screen.currentResolution.height)
             {
                 currentResolutionIndex = i;
             }
         }
+        
+        // Atualizar o array de resoluções com apenas as únicas (maior refresh rate)
+        resolutions = sortedResolutions.ToArray();
         
         resolutionDropdown.AddOptions(options);
         resolutionDropdown.value = currentResolutionIndex;
