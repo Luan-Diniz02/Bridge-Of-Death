@@ -6792,7 +6792,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1596448669
 Transform:
   m_ObjectHideFlags: 0
@@ -8132,6 +8132,11 @@ PrefabInstance:
       propertyPath: audioSourceBackground
       value: 
       objectReference: {fileID: 1425784726}
+    - target: {fileID: 5438674212726761866, guid: 753d84635d26718478e3e704e0e64464,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5570415532461884989, guid: 753d84635d26718478e3e704e0e64464,
         type: 3}
       propertyPath: m_AnchorMax.x
