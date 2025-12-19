@@ -7358,11 +7358,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6215317092976457825}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 15, y: 400}
-  m_SizeDelta: {x: -30, y: 800}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 30, y: -81}
+  m_SizeDelta: {x: 1920, y: 1080}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &563999637164215700
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -7427,7 +7427,7 @@ MonoBehaviour:
   m_fontSizeMax: 100
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 512
+  m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_characterHorizontalScale: 1
@@ -8469,7 +8469,13 @@ MonoBehaviour:
   buttonVideoPressed: {fileID: 7818560203929395089}
   buttonCreditsPressed: {fileID: 3791149989175903816}
   playMenu: {fileID: 2063287864047816606}
+  storeMenu: {fileID: 0}
   exitMenu: {fileID: 6278093720342287394}
+  pauseButton: {fileID: 0}
+  UI_Gameplay: {fileID: 0}
+  audioSourceBackground: {fileID: 0}
+  audioClipMenu: {fileID: 0}
+  audioClipGameplay: {fileID: 0}
   audioSettings: {fileID: 830817747726400298}
   videoSettings: {fileID: 7215365349806329792}
 --- !u!1 &5736581661863635859
