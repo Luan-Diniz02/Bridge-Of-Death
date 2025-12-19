@@ -1,5 +1,4 @@
 using TMPro;
-using Unity.AppUI.UI;
 using UnityEngine;
 
 public class LevelCompleted : MonoBehaviour
