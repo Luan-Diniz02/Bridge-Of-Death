@@ -1226,6 +1226,7 @@ MonoBehaviour:
   - {fileID: 273723806}
   - {fileID: 1976090342}
   - {fileID: 1976090341}
+  menuManager: {fileID: 728827625}
 --- !u!1 &221751053
 GameObject:
   m_ObjectHideFlags: 0

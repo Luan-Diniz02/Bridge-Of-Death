@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.AppUI.UI;
 using UnityEngine;
 
 public class LevelCompleted : MonoBehaviour
@@ -7,6 +8,7 @@ public class LevelCompleted : MonoBehaviour
     [SerializeField] private TextMeshProUGUI coinsCollectedText, livesRemainingText, enemiesDefeatedText, totalCoinsText, titleText;
     [SerializeField] private GameObject levelCompletedPanel;
     [SerializeField] private GameObject [] OtherUI;
+    [SerializeField] private MenuManager menuManager;
     private int coinsCollected;
     private int enemysDefeated;
     private int remainingLives;
@@ -68,6 +70,7 @@ public class LevelCompleted : MonoBehaviour
     public void DisplayLevelCompletionStats()
     {
         Time.timeScale = 0;
+        if(menuManager != null) menuManager.PlayMenuMusic();
         DisableOtherUI();
         SetCoinsCollected();
         SetRemainingLives();
