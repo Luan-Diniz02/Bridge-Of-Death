@@ -4422,6 +4422,9 @@ MonoBehaviour:
   - characterID: character_saulo
     prefab: {fileID: 9004593619112199787, guid: cb4a26a3815ea744099e4a25b4e2ae5c,
       type: 3}
+  - characterID: character_diniz
+    prefab: {fileID: 4568094373029529053, guid: 21ffd9358b9cd2542a1647e9f5bb22ec,
+      type: 3}
 --- !u!114 &728827625 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5247530822350994254, guid: 753d84635d26718478e3e704e0e64464,
