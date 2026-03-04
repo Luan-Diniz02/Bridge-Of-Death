@@ -57,17 +57,17 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: ab7fe49a2f30c504ea8ec48b54636d6d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.7720747
+      value: -5.979869
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ab7fe49a2f30c504ea8ec48b54636d6d,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 17.747831
+      value: 17.747828
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ab7fe49a2f30c504ea8ec48b54636d6d,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 212.801
+      value: 218.36182
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: ab7fe49a2f30c504ea8ec48b54636d6d,
         type: 3}
@@ -119,6 +119,11 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 3188832854291525576, guid: ab7fe49a2f30c504ea8ec48b54636d6d,
+        type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 8df223304a78182419f9b0093187a4a7, type: 2}
     - target: {fileID: 5866666021909216657, guid: ab7fe49a2f30c504ea8ec48b54636d6d,
         type: 3}
       propertyPath: m_Controller
